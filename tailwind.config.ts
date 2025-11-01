@@ -70,8 +70,8 @@ export default {
           to: { height: "0" },
         },
         "glow": {
-          "0%, 100%": { boxShadow: "0 0 20px hsl(180 100% 50% / 0.5)" },
-          "50%": { boxShadow: "0 0 30px hsl(180 100% 50% / 0.8)" },
+          "0%, 100%": { boxShadow: "0 0 20px hsl(0 0% 75% / 0.3)" },
+          "50%": { boxShadow: "0 0 30px hsl(0 0% 75% / 0.5)" },
         },
         "fade-in": {
           from: { opacity: "0", transform: "translateY(10px)" },
