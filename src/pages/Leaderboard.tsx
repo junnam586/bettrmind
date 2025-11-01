@@ -79,7 +79,7 @@ const Leaderboard = () => {
           {mockTipsters.map((tipster, index) => (
             <Card 
               key={tipster.id} 
-              className="gradient-card border-border hover:border-primary/50 transition-all duration-300 hover:glow-gray"
+              className="gradient-card border-border hover:border-primary/30 transition-all duration-500 hover:glow-premium"
             >
               <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row md:items-center gap-4">

@@ -2,6 +2,7 @@ import { ArrowRight, TrendingUp, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import Navigation from "@/components/Navigation";
+import TipsterCard from "@/components/TipsterCard";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -24,9 +25,36 @@ const Index = () => {
   ];
 
   const topTipsters = [
-    { username: "SharpShooter23", roi: "+32.5%", followers: "1.9K" },
-    { username: "DataDriven", roi: "+28.3%", followers: "2.4K" },
-    { username: "TheAnalyst", roi: "+24.7%", followers: "1.2K" },
+    {
+      username: "SharpShooter23",
+      roi: "+32.5%",
+      followers: "1.9K",
+      bio: "Former NCAA basketball analyst with 8 years of data-driven betting. Specializes in NBA spreads and live betting.",
+      totalBets: 284,
+      recentVolume: "45K",
+      winRate: 58,
+      recentPerformance: [3.2, 5.1, -2.3, 8.4, 4.2, 6.7, -1.5, 9.2, 3.8, 7.1, 2.9, 5.6, 4.3, 6.2],
+    },
+    {
+      username: "DataDriven",
+      roi: "+28.3%",
+      followers: "2.4K",
+      bio: "Quantitative analyst using ML models for sports predictions. Focus on MLB and soccer with statistical edge.",
+      totalBets: 312,
+      recentVolume: "52K",
+      winRate: 62,
+      recentPerformance: [4.5, 3.2, 7.8, 2.1, 6.3, 5.9, 4.7, -1.8, 8.1, 3.4, 5.2, 6.8, 2.9, 7.3],
+    },
+    {
+      username: "TheAnalyst",
+      roi: "+24.7%",
+      followers: "1.2K",
+      bio: "Professional sports bettor since 2018. Expert in NFL game theory and advanced metrics.",
+      totalBets: 198,
+      recentVolume: "38K",
+      winRate: 55,
+      recentPerformance: [2.8, 6.4, 3.1, -2.5, 5.7, 4.2, 7.5, 2.3, 5.9, 3.6, 6.1, 4.8, -1.2, 5.4],
+    },
   ];
 
   return (
@@ -35,7 +63,8 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,hsl(0_0%_85%/0.05),transparent)]" />
         
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -59,23 +88,27 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {/* Featured Tipsters */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
             {topTipsters.map((tipster) => (
-              <Card key={tipster.username} className="gradient-card border-border hover:border-primary/50 transition-all">
-                <CardContent className="p-6 text-center">
-                  <div className="text-3xl font-bold text-success mb-2">{tipster.roi}</div>
-                  <div className="font-medium mb-1">@{tipster.username}</div>
-                  <div className="text-sm text-muted-foreground">{tipster.followers} followers</div>
-                </CardContent>
-              </Card>
+              <TipsterCard
+                key={tipster.username}
+                username={tipster.username}
+                roi={tipster.roi}
+                followers={tipster.followers}
+                bio={tipster.bio}
+                totalBets={tipster.totalBets}
+                recentVolume={tipster.recentVolume}
+                winRate={tipster.winRate}
+                recentPerformance={tipster.recentPerformance}
+              />
             ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-card/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-card/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">How It Works</h2>
