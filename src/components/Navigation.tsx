@@ -25,7 +25,7 @@ const Navigation = () => {
             <span className="text-xl font-bold text-gradient">BettrMind</span>
           </Link>
           
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-3">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
@@ -33,14 +33,14 @@ const Navigation = () => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all ${
+                  className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg transition-all ${
                     isActive
                       ? "bg-primary/10 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-xs font-medium">{item.label}</span>
+                  <Icon className="w-3.5 h-3.5" />
+                  <span className="text-xs font-medium whitespace-nowrap">{item.label}</span>
                 </Link>
               );
             })}
