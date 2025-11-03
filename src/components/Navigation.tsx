@@ -22,8 +22,8 @@ const Navigation = () => {
             <img 
               src={logo} 
               alt="BettrMind Logo" 
-              className="h-10 w-auto brightness-0 dark:brightness-100 opacity-70 group-hover:opacity-100 transition-opacity"
-              style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(8%) saturate(1751%) hue-rotate(169deg) brightness(94%) contrast(89%)' }}
+              className="h-10 w-auto opacity-70 group-hover:opacity-100 transition-opacity"
+              style={{ filter: 'brightness(0) invert(1)' }}
             />
           </Link>
           

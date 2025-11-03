@@ -39,7 +39,11 @@ export const BadgeIcon = ({ label, className = "w-6 h-6" }: BadgeIconProps) => {
       src={badgeImage} 
       alt={label} 
       className={className}
-      style={{ objectFit: "contain" }}
+      style={{ 
+        objectFit: "contain",
+        mixBlendMode: "multiply",
+        opacity: 0.9
+      }}
     />
   );
 };
