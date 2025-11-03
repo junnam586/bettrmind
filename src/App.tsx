@@ -13,6 +13,7 @@ import CreateBet from "./pages/CreateBet";
 import BrowseBets from "./pages/BrowseBets";
 import MyCopiers from "./pages/MyCopiers";
 import GetCopiedHub from "./pages/GetCopiedHub";
+import ActiveBets from "./pages/ActiveBets";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/create-bet" element={<CreateBet />} />
           <Route path="/browse-bets" element={<BrowseBets />} />
           <Route path="/my-copiers" element={<MyCopiers />} />
+          <Route path="/active-bets" element={<ActiveBets />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

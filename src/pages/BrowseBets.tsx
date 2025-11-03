@@ -1,128 +1,161 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Navigation from "@/components/Navigation";
-import { toast } from "@/hooks/use-toast";
-import { Copy, TrendingUp, Users, DollarSign, Trophy, Filter } from "lucide-react";
+import { TrendingUp, Users, Trophy, Copy, Filter, Circle, Dribbble } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
-interface PublishedBet {
+interface CreatorBet {
   id: number;
   creator: string;
   creatorId: number;
   sport: string;
+  sportIcon: any;
   game: string;
   betType: string;
-  selections: string[];
+  description: string;
   odds: string;
-  wager: number;
-  potentialPayout: number;
-  commission: number;
   copiers: number;
+  tipPercentage: number;
   winRate: number;
   totalEarned: number;
-  postedAgo: string;
 }
 
-const mockPublishedBets: PublishedBet[] = [
+const mockCreatorBets: CreatorBet[] = [
   {
     id: 1,
-    creator: "sharp_nfl",
-    creatorId: 4,
+    creator: "SharpShooter23",
+    creatorId: 1,
     sport: "NFL",
+    sportIcon: Circle,
     game: "Chiefs vs Bills",
-    betType: "3-Leg Parlay",
-    selections: ["Chiefs -3.5", "Over 54.5", "Mahomes 2+ TDs"],
-    odds: "+650",
-    wager: 200,
-    potentialPayout: 1300,
-    commission: 10,
-    copiers: 847,
+    betType: "Spread",
+    description: "Chiefs -3.5",
+    odds: "1.90",
+    copiers: 156,
+    tipPercentage: 10,
     winRate: 67,
     totalEarned: 12400,
-    postedAgo: "2h ago"
   },
   {
     id: 2,
-    creator: "rachel_hoops",
-    creatorId: 12,
+    creator: "DataDriven",
+    creatorId: 2,
     sport: "NBA",
+    sportIcon: Dribbble,
     game: "Lakers vs Warriors",
-    betType: "Spread",
-    selections: ["Lakers -5.5"],
-    odds: "-110",
-    wager: 110,
-    potentialPayout: 210,
-    commission: 5,
-    copiers: 1243,
-    winRate: 65,
+    betType: "Player Prop",
+    description: "LeBron James Over 25.5 Points",
+    odds: "1.85",
+    copiers: 203,
+    tipPercentage: 12,
+    winRate: 62,
     totalEarned: 18900,
-    postedAgo: "4h ago"
   },
   {
     id: 3,
-    creator: "mike_analytics",
-    creatorId: 1,
+    creator: "TheAnalyst",
+    creatorId: 3,
     sport: "NFL",
-    game: "49ers vs Cowboys",
-    betType: "2-Leg Parlay",
-    selections: ["49ers -7", "Under 48.5"],
-    odds: "+260",
-    wager: 150,
-    potentialPayout: 540,
-    commission: 15,
-    copiers: 592,
+    sportIcon: Circle,
+    game: "Ravens vs 49ers",
+    betType: "Parlay",
+    description: "Ravens ML + Over 48.5",
+    odds: "3.50",
+    copiers: 89,
+    tipPercentage: 8,
     winRate: 64,
     totalEarned: 15200,
-    postedAgo: "5h ago"
   },
   {
     id: 4,
-    creator: "stats_sam",
-    creatorId: 31,
-    sport: "NBA",
-    game: "Celtics vs Heat",
-    betType: "Moneyline",
-    selections: ["Celtics ML"],
-    odds: "-165",
-    wager: 165,
-    potentialPayout: 265,
-    commission: 8,
-    copiers: 321,
-    winRate: 61,
-    totalEarned: 8200,
-    postedAgo: "1h ago"
+    creator: "SoccerPro",
+    creatorId: 4,
+    sport: "Soccer",
+    sportIcon: Circle,
+    game: "Man City vs Liverpool",
+    betType: "Over/Under",
+    description: "Over 2.5 Goals",
+    odds: "1.80",
+    copiers: 142,
+    tipPercentage: 10,
+    winRate: 58,
+    totalEarned: 8900,
   },
   {
     id: 5,
-    creator: "david_odds",
-    creatorId: 3,
-    sport: "Soccer",
-    game: "Man City vs Arsenal",
-    betType: "Over/Under",
-    selections: ["Over 2.5 goals"],
-    odds: "+105",
-    wager: 100,
-    potentialPayout: 205,
-    commission: 12,
-    copiers: 456,
-    winRate: 58,
-    totalEarned: 6700,
-    postedAgo: "3h ago"
+    creator: "PropMaster",
+    creatorId: 5,
+    sport: "NBA",
+    sportIcon: Dribbble,
+    game: "Celtics vs Heat",
+    betType: "Spread",
+    description: "Celtics -5.5",
+    odds: "1.95",
+    copiers: 178,
+    tipPercentage: 15,
+    winRate: 65,
+    totalEarned: 21300,
+  },
+  {
+    id: 6,
+    creator: "MLBKing",
+    creatorId: 6,
+    sport: "MLB",
+    sportIcon: Circle,
+    game: "Yankees vs Red Sox",
+    betType: "Moneyline",
+    description: "Yankees ML",
+    odds: "1.70",
+    copiers: 95,
+    tipPercentage: 7,
+    winRate: 61,
+    totalEarned: 7200,
+  },
+  {
+    id: 7,
+    creator: "HockeySharp",
+    creatorId: 7,
+    sport: "NHL",
+    sportIcon: Circle,
+    game: "Maple Leafs vs Bruins",
+    betType: "Spread",
+    description: "Maple Leafs -1.5",
+    odds: "2.60",
+    copiers: 67,
+    tipPercentage: 9,
+    winRate: 59,
+    totalEarned: 5800,
+  },
+  {
+    id: 8,
+    creator: "FightPicks",
+    creatorId: 8,
+    sport: "UFC",
+    sportIcon: Circle,
+    game: "UFC 300 Main Event",
+    betType: "Moneyline",
+    description: "Fighter A ML",
+    odds: "1.70",
+    copiers: 123,
+    tipPercentage: 10,
+    winRate: 63,
+    totalEarned: 9400,
   },
 ];
 
 const BrowseBets = () => {
+  const { toast } = useToast();
+  const [sportFilter, setSportFilter] = useState("all");
   const [sortBy, setSortBy] = useState("copiers");
-  const [filterSport, setFilterSport] = useState("all");
 
-  let filteredBets = [...mockPublishedBets];
+  let filteredBets = [...mockCreatorBets];
   
-  if (filterSport !== "all") {
-    filteredBets = filteredBets.filter(bet => bet.sport.toLowerCase() === filterSport);
+  if (sportFilter !== "all") {
+    filteredBets = filteredBets.filter(bet => bet.sport.toLowerCase() === sportFilter);
   }
 
   filteredBets.sort((a, b) => {
@@ -134,22 +167,22 @@ const BrowseBets = () => {
       case "earnings":
         return b.totalEarned - a.totalEarned;
       case "recent":
-        return a.id - b.id;
+        return b.id - a.id;
       default:
         return 0;
     }
   });
 
-  const handleCopyBet = (bet: PublishedBet) => {
+  const handleCopyBet = (bet: CreatorBet) => {
     toast({
-      title: "Bet copied!",
-      description: `You've copied @${bet.creator}'s ${bet.betType} bet`,
+      title: "Bet Copied!",
+      description: `Copied ${bet.creator}'s ${bet.sport} bet with ${bet.tipPercentage}% tip requirement`,
     });
   };
 
-  const getAvatarUrl = (creatorId: number, username: string) => {
+  const getAvatarUrl = (id: number, username: string) => {
     const avatarStyles = ['bottts', 'identicon', 'shapes', 'avataaars-neutral', 'pixel-art'];
-    const style = avatarStyles[creatorId % avatarStyles.length];
+    const style = avatarStyles[id % avatarStyles.length];
     return `https://api.dicebear.com/7.x/${style}/svg?seed=${username}`;
   };
 
@@ -160,126 +193,110 @@ const BrowseBets = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 text-gradient">Browse & Copy Bets</h1>
-          <p className="text-muted-foreground">Discover winning bets from top creators and copy them instantly</p>
+          <p className="text-muted-foreground">Discover top bettors across all sports and copy their winning bets</p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 mb-6">
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-muted-foreground" />
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by..." />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="copiers">Most Copied</SelectItem>
-                <SelectItem value="winRate">Best Win Rate</SelectItem>
-                <SelectItem value="earnings">Top Earners</SelectItem>
-                <SelectItem value="recent">Most Recent</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <Select value={filterSport} onValueChange={setFilterSport}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="All Sports" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Sports</SelectItem>
-              <SelectItem value="nfl">NFL</SelectItem>
-              <SelectItem value="nba">NBA</SelectItem>
-              <SelectItem value="soccer">Soccer</SelectItem>
-              <SelectItem value="mlb">MLB</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <Card className="bg-card border-border mb-6">
+          <CardContent className="p-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Filter & Sort:</span>
+              </div>
+              <div className="flex gap-3">
+                <Select value={sportFilter} onValueChange={setSportFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="All Sports" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Sports</SelectItem>
+                    <SelectItem value="nfl">NFL</SelectItem>
+                    <SelectItem value="nba">NBA</SelectItem>
+                    <SelectItem value="mlb">MLB</SelectItem>
+                    <SelectItem value="nhl">NHL</SelectItem>
+                    <SelectItem value="ufc">UFC</SelectItem>
+                    <SelectItem value="soccer">Soccer</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Sort by" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="copiers">Most Copied</SelectItem>
+                    <SelectItem value="winRate">Best Win Rate</SelectItem>
+                    <SelectItem value="earnings">Top Earners</SelectItem>
+                    <SelectItem value="recent">Most Recent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Bets Grid */}
-        <div className="grid md:grid-cols-2 gap-4">
-          {filteredBets.map(bet => (
-            <Card key={bet.id} className="gradient-card border-border hover:border-primary/30 transition-all">
-              <CardContent className="p-5">
-                {/* Creator Info */}
-                <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
-                  <Avatar className="w-12 h-12 ring-2 ring-border">
-                    <AvatarImage src={getAvatarUrl(bet.creatorId, bet.creator)} alt={bet.creator} />
-                    <AvatarFallback>{bet.creator.substring(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <Link to={`/bettor/${bet.creator}`} className="font-bold hover:text-primary transition-colors">
-                      @{bet.creator}
-                    </Link>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-                      <span className="flex items-center gap-1">
-                        <TrendingUp className="w-3 h-3" />
-                        {bet.winRate}% win rate
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" />
-                        ${(bet.totalEarned / 1000).toFixed(1)}K earned
-                      </span>
+        <div className="grid grid-cols-1 gap-4">
+          {filteredBets.map(bet => {
+            const SportIcon = bet.sportIcon;
+            return (
+              <Card key={bet.id} className="bg-card border-border hover:border-primary/50 transition-all">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* Creator Info */}
+                    <div className="flex items-center gap-3 md:w-64">
+                      <Avatar className="w-12 h-12 ring-2 ring-border">
+                        <AvatarImage src={getAvatarUrl(bet.creatorId, bet.creator)} alt={bet.creator} />
+                        <AvatarFallback>{bet.creator.substring(0, 2).toUpperCase()}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-semibold">@{bet.creator}</div>
+                        <div className="text-sm text-muted-foreground flex items-center gap-2">
+                          <Trophy className="w-3 h-3 text-primary" />
+                          {bet.winRate}% Win Rate
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bet Details */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Badge variant="outline" className="flex items-center gap-1">
+                          <SportIcon className="w-3 h-3" />
+                          {bet.sport}
+                        </Badge>
+                        <Badge variant="secondary">{bet.betType}</Badge>
+                      </div>
+                      <div className="font-semibold mb-1">{bet.game}</div>
+                      <div className="text-sm text-muted-foreground">{bet.description}</div>
+                      <div className="flex items-center gap-4 mt-3 text-sm">
+                        <div className="flex items-center gap-1">
+                          <span className="text-muted-foreground">Odds:</span>
+                          <span className="font-semibold">{bet.odds}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="w-3 h-3 text-muted-foreground" />
+                          <span className="text-muted-foreground">{bet.copiers} copiers</span>
+                        </div>
+                        <div className="flex items-center gap-1 px-2 py-1 rounded bg-primary/10">
+                          <TrendingUp className="w-3 h-3 text-primary" />
+                          <span className="font-semibold text-primary">{bet.tipPercentage}% tip required</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Copy Button */}
+                    <div className="flex items-center">
+                      <Button onClick={() => handleCopyBet(bet)} size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                        <Copy className="w-4 h-4 mr-2" />
+                        Copy Bet
+                      </Button>
                     </div>
                   </div>
-                  <Badge variant="secondary">{bet.sport}</Badge>
-                </div>
-
-                {/* Bet Details */}
-                <div className="space-y-3 mb-4">
-                  <div>
-                    <div className="text-sm text-muted-foreground mb-1">{bet.game}</div>
-                    <Badge variant="outline" className="mb-2">{bet.betType}</Badge>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    {bet.selections.map((selection, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-2 rounded bg-secondary/50">
-                        <span className="text-sm font-medium">{selection}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm pt-2 border-t border-border">
-                    <span className="text-muted-foreground">Odds</span>
-                    <span className="font-mono font-bold text-primary">{bet.odds}</span>
-                  </div>
-                </div>
-
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-3 mb-4 p-3 rounded-lg bg-primary/5">
-                  <div className="text-center">
-                    <div className="text-lg font-bold">${bet.wager}</div>
-                    <div className="text-xs text-muted-foreground">Wager</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-success">${bet.potentialPayout}</div>
-                    <div className="text-xs text-muted-foreground">Payout</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-primary">{bet.commission}%</div>
-                    <div className="text-xs text-muted-foreground">Commission</div>
-                  </div>
-                </div>
-
-                {/* Footer */}
-                <div className="flex items-center justify-between pt-3 border-t border-border">
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {bet.copiers} copiers
-                    </span>
-                    <span>{bet.postedAgo}</span>
-                  </div>
-                  <Button
-                    className="bg-primary hover:bg-primary/90"
-                    onClick={() => handleCopyBet(bet)}
-                  >
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy Bet
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
