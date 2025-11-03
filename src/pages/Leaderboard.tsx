@@ -146,6 +146,7 @@ const Leaderboard = () => {
           {sortedBettors.map((bettor, index) => {
             const chartData = bettor.recentPerformance.map((value, i) => ({ index: i, value }));
             const displayRank = index + 1;
+            const avatar = `/images/avatars/avatar-${(index % 24) + 1}.jpg`;
             
             return (
               <Card 
@@ -155,13 +156,16 @@ const Leaderboard = () => {
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row md:items-center gap-6">
                     {/* Rank and Avatar */}
-                    <div className="flex items-center gap-4 md:w-48">
+                    <div className="flex items-center gap-4 md:w-56">
                       <div className="text-3xl font-bold text-muted-foreground w-12 text-center">
                         #{displayRank}
                       </div>
-                      <div className={`w-14 h-14 rounded-full ${getAvatarColor(bettor.username)} flex items-center justify-center text-white font-bold text-lg flex-shrink-0`}>
-                        {getInitials(bettor.username)}
-                      </div>
+                      <img
+                        src={avatar}
+                        alt={`Profile photo of @${bettor.username}`}
+                        className="w-16 h-16 rounded-full object-cover ring-1 ring-border flex-shrink-0"
+                        loading="lazy"
+                      />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="text-lg font-bold truncate">@{bettor.username}</h3>
