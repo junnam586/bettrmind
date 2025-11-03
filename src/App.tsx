@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import Leaderboard from "./pages/Leaderboard";
 import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
+import MakeBets from "./pages/MakeBets";
+import BettorProfile from "./pages/BettorProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +24,8 @@ const App = () => (
           <Route path="/leaderboard" element={<Leaderboard />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/wallet" element={<Wallet />} />
+          <Route path="/make-bets" element={<MakeBets />} />
+          <Route path="/bettor/:username" element={<BettorProfile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

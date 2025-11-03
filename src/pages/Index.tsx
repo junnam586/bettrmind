@@ -73,13 +73,15 @@ const Index = () => {
               <span className="text-gradient">Pay Only When They Win.</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Follow verified sports bettors with proven track records. Track your ROI live in a sleek, data-driven dashboard.
+              Turn your sports knowledge into consistent profits with real-time tracking. Let profitable bettors make money for you while you track every dollar.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8">
-                Start Copying Now
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
+              <Link to="/make-bets">
+                <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8">
+                  Start Copying Now
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
               <Link to="/leaderboard">
                 <Button size="lg" variant="outline" className="text-lg px-8 border-primary text-primary hover:bg-primary/10">
                   View Leaderboard

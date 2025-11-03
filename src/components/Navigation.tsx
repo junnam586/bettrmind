@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, TrendingUp, LayoutDashboard, Wallet } from "lucide-react";
+import { Home, TrendingUp, LayoutDashboard, Wallet, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Navigation = () => {
@@ -45,10 +45,12 @@ const Navigation = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">Sign In</Button>
-            <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Get Started
-            </Button>
+            <Link to="/make-bets">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <Target className="w-4 h-4 mr-2" />
+                Make Bets
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

@@ -30,9 +30,9 @@ const TipsterCard = ({
   }));
 
   return (
-    <Card className="gradient-card border-border hover:border-primary/30 transition-all duration-500 overflow-hidden group hover:glow-premium h-full">
-      <CardContent className="p-5">
-        <div className="flex flex-col gap-4">
+    <Card className="gradient-card border-border hover:border-primary/30 transition-all duration-500 overflow-hidden group hover:glow-premium h-full flex flex-col">
+      <CardContent className="p-5 flex flex-col flex-1">
+        <div className="flex flex-col gap-4 flex-1">
           {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
