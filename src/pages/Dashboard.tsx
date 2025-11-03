@@ -1,7 +1,21 @@
-import { TrendingUp, TrendingDown, DollarSign, Target, Calendar, ArrowUp, ArrowDown } from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Target, Calendar, ArrowUp, ArrowDown, Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
+
+// Generate badge based on criteria
+const getBadge = (yearsActive: number, winRate: number, totalInvested: number) => {
+  if (totalInvested >= 100000) return { variant: "platinum" as const, label: "💎 Elite Investor" };
+  if (totalInvested >= 50000) return { variant: "gold" as const, label: "🏆 Pro Investor" };
+  if (winRate >= 70) return { variant: "platinum" as const, label: "💎 Master Bettor" };
+  if (winRate >= 65) return { variant: "gold" as const, label: "🏆 Expert" };
+  if (totalInvested >= 10000) return { variant: "silver" as const, label: "⭐ High Roller" };
+  if (winRate >= 60) return { variant: "silver" as const, label: "⭐ Sharpshooter" };
+  if (yearsActive >= 3) return { variant: "gold" as const, label: "🏆 Veteran" };
+  if (winRate >= 55) return { variant: "bronze" as const, label: "🥉 Consistent" };
+  if (yearsActive >= 1) return { variant: "silver" as const, label: "⭐ Experienced" };
+  return { variant: "bronze" as const, label: "🥉 Rookie" };
+};
 
 const Dashboard = () => {
   const stats = [
@@ -97,14 +111,44 @@ const Dashboard = () => {
   const winRate = ((wonBets.length / completedBets.length) * 100).toFixed(1);
   const roi = ((totalProfit / totalWagered) * 100).toFixed(1);
 
+  // User profile data
+  const userProfile = {
+    yearsActive: 2.3,
+    totalInvested: 45000,
+    leaderboardRank: 23, // Out of ~50 users
+    sports: ["NFL", "NBA", "MLB"]
+  };
+
+  const userBadge = getBadge(userProfile.yearsActive, parseFloat(winRate), userProfile.totalInvested);
+
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Dashboard</h1>
-          <p className="text-muted-foreground">Track your betting performance and manage your active bets</p>
+          <div className="flex items-start justify-between flex-wrap gap-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 text-gradient">Dashboard</h1>
+              <p className="text-muted-foreground">Track your betting performance and manage your active bets</p>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-2">
+                <Trophy className="w-5 h-5 text-primary" />
+                <span className="text-lg font-bold">Rank #{userProfile.leaderboardRank}</span>
+              </div>
+              <Badge variant={userBadge.variant} className="text-sm">
+                {userBadge.label}
+              </Badge>
+              <div className="flex gap-1">
+                {userProfile.sports.map((sport) => (
+                  <Badge key={sport} variant="secondary" className="text-xs">
+                    {sport}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Stats Cards */}

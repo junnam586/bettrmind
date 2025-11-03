@@ -9,77 +9,95 @@ import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 // Generate 40-50 realistic bettor profiles
+// Generate badge based on criteria
+const getBadge = (yearsActive: number, winRate: number, totalInvested: number) => {
+  // Priority: investment > win rate > years
+  if (totalInvested >= 100000) return { variant: "platinum" as const, label: "💎 Elite Investor" };
+  if (totalInvested >= 50000) return { variant: "gold" as const, label: "🏆 Pro Investor" };
+  if (winRate >= 70) return { variant: "platinum" as const, label: "💎 Master Bettor" };
+  if (winRate >= 65) return { variant: "gold" as const, label: "🏆 Expert" };
+  if (totalInvested >= 10000) return { variant: "silver" as const, label: "⭐ High Roller" };
+  if (winRate >= 60) return { variant: "silver" as const, label: "⭐ Sharpshooter" };
+  if (yearsActive >= 3) return { variant: "gold" as const, label: "🏆 Veteran" };
+  if (winRate >= 55) return { variant: "bronze" as const, label: "🥉 Consistent" };
+  if (yearsActive >= 1) return { variant: "silver" as const, label: "⭐ Experienced" };
+  return { variant: "bronze" as const, label: "🥉 Rookie" };
+};
+
 const generateBettors = () => {
+  const allSports = ["NFL", "NBA", "Soccer", "MLB", "UFC", "NHL", "Tennis", "Golf"];
+  
   const bettors = [
-    // NFL Bettors (10)
-    { username: "mike_analytics", sport: "NFL", followers: 12400, winRate: 64, roi: 58.5, totalBets: 287 },
-    { username: "betting_blake", sport: "NFL", followers: 8900, winRate: 61, roi: 44.2, totalBets: 245 },
-    { username: "david_odds", sport: "NFL", followers: 6700, winRate: 58, roi: 39.8, totalBets: 312 },
-    { username: "sharp_nfl", sport: "NFL", followers: 14200, winRate: 67, roi: 72.4, totalBets: 198 },
-    { username: "gridiron_guru", sport: "NFL", followers: 5400, winRate: 59, roi: 41.5, totalBets: 223 },
-    { username: "touchdown_tony", sport: "NFL", followers: 3800, winRate: 56, roi: 27.3, totalBets: 267 },
-    { username: "pigskin_pro", sport: "NFL", followers: 7200, winRate: 62, roi: 45.8, totalBets: 189 },
-    { username: "redzone_rick", sport: "NFL", followers: 4100, winRate: 57, roi: 28.9, totalBets: 234 },
-    { username: "fourth_down", sport: "NFL", followers: 2900, winRate: 55, roi: 26.4, totalBets: 201 },
-    { username: "endzone_ed", sport: "NFL", followers: 1800, winRate: 54, roi: 24.7, totalBets: 178 },
-    
-    // NBA Bettors (10)
-    { username: "sarah_sports", sport: "NBA", followers: 11200, winRate: 63, roi: 67.3, totalBets: 298 },
-    { username: "rachel_hoops", sport: "NBA", followers: 9800, winRate: 65, roi: 69.8, totalBets: 256 },
-    { username: "bucket_betty", sport: "NBA", followers: 7600, winRate: 60, roi: 42.1, totalBets: 289 },
-    { username: "swish_sam", sport: "NBA", followers: 6200, winRate: 59, roi: 40.5, totalBets: 245 },
-    { username: "dunk_drew", sport: "NBA", followers: 8400, winRate: 62, roi: 54.9, totalBets: 267 },
-    { username: "court_queen", sport: "NBA", followers: 4900, winRate: 58, roi: 39.2, totalBets: 223 },
-    { username: "hoop_hunter", sport: "NBA", followers: 3500, winRate: 56, roi: 37.8, totalBets: 198 },
-    { username: "three_pointer", sport: "NBA", followers: 5800, winRate: 61, roi: 43.4, totalBets: 234 },
-    { username: "alley_oop", sport: "NBA", followers: 2700, winRate: 55, roi: 25.9, totalBets: 187 },
-    { username: "slam_specialist", sport: "NBA", followers: 1950, winRate: 53, roi: 23.2, totalBets: 165 },
-    
-    // Soccer Bettors (10)
-    { username: "j_thompson", sport: "Soccer", followers: 10500, winRate: 62, roi: 56.7, totalBets: 276 },
-    { username: "futbol_frank", sport: "Soccer", followers: 8700, winRate: 60, roi: 53.5, totalBets: 298 },
-    { username: "goal_getter", sport: "Soccer", followers: 6900, winRate: 59, roi: 41.8, totalBets: 245 },
-    { username: "midfield_mike", sport: "Soccer", followers: 5600, winRate: 58, roi: 40.3, totalBets: 267 },
-    { username: "striker_steve", sport: "Soccer", followers: 7800, winRate: 61, roi: 44.6, totalBets: 223 },
-    { username: "keeper_kelly", sport: "Soccer", followers: 4200, winRate: 57, roi: 38.4, totalBets: 189 },
-    { username: "pitch_perfect", sport: "Soccer", followers: 3100, winRate: 56, roi: 36.7, totalBets: 201 },
-    { username: "corner_kick", sport: "Soccer", followers: 2400, winRate: 54, roi: 25.1, totalBets: 178 },
-    { username: "penalty_pro", sport: "Soccer", followers: 5300, winRate: 59, roi: 41.2, totalBets: 234 },
-    { username: "net_finder", sport: "Soccer", followers: 1700, winRate: 53, roi: 22.8, totalBets: 156 },
-    
-    // MLB Bettors (10)
-    { username: "stats_sam", sport: "MLB", followers: 9400, winRate: 61, roi: 55.1, totalBets: 312 },
-    { username: "diamond_dave", sport: "MLB", followers: 7900, winRate: 59, roi: 52.4, totalBets: 289 },
-    { username: "homer_harry", sport: "MLB", followers: 6500, winRate: 58, roi: 49.9, totalBets: 256 },
-    { username: "bases_loaded", sport: "MLB", followers: 5100, winRate: 57, roi: 38.6, totalBets: 234 },
-    { username: "curve_ball", sport: "MLB", followers: 7200, winRate: 60, roi: 53.7, totalBets: 278 },
-    { username: "fastball_fred", sport: "MLB", followers: 4700, winRate: 56, roi: 37.2, totalBets: 212 },
-    { username: "strike_zone", sport: "MLB", followers: 3900, winRate: 55, roi: 36.5, totalBets: 198 },
-    { username: "grand_slam", sport: "MLB", followers: 6100, winRate: 59, roi: 41.5, totalBets: 245 },
-    { username: "world_series", sport: "MLB", followers: 2800, winRate: 54, roi: 24.9, totalBets: 187 },
-    { username: "batting_boss", sport: "MLB", followers: 2100, winRate: 53, roi: 23.5, totalBets: 165 },
-    
-    // Other Sports (10)
-    { username: "kelly_picks", sport: "UFC", followers: 8200, winRate: 60, roi: 54.3, totalBets: 198 },
-    { username: "ufc_ultimate", sport: "UFC", followers: 6800, winRate: 58, roi: 50.7, totalBets: 167 },
-    { username: "tennis_ace", sport: "Tennis", followers: 5400, winRate: 57, roi: 49.1, totalBets: 223 },
-    { username: "hockey_hero", sport: "NHL", followers: 7100, winRate: 59, roi: 52.8, totalBets: 245 },
-    { username: "golf_guru", sport: "Golf", followers: 4600, winRate: 56, roi: 47.6, totalBets: 189 },
-    { username: "mma_master", sport: "UFC", followers: 5900, winRate: 58, roi: 51.3, totalBets: 201 },
-    { username: "puck_pro", sport: "NHL", followers: 3700, winRate: 55, roi: 36.2, totalBets: 178 },
-    { username: "knockout_king", sport: "UFC", followers: 4300, winRate: 57, roi: 38.5, totalBets: 156 },
-    { username: "birdie_boss", sport: "Golf", followers: 2600, winRate: 54, roi: 25.4, totalBets: 145 },
-    { username: "sports_sam", sport: "Multi", followers: 9700, winRate: 61, roi: 65.9, totalBets: 334 },
+    { username: "mike_analytics", primarySport: "NFL", followers: 12400, winRate: 64, roi: 58.5, totalBets: 287, yearsActive: 3.5, totalInvested: 85000 },
+    { username: "betting_blake", primarySport: "NFL", followers: 8900, winRate: 61, roi: 44.2, totalBets: 245, yearsActive: 2.1, totalInvested: 42000 },
+    { username: "david_odds", primarySport: "Soccer", followers: 6700, winRate: 58, roi: 39.8, totalBets: 312, yearsActive: 1.8, totalInvested: 28000 },
+    { username: "sharp_nfl", primarySport: "NFL", followers: 14200, winRate: 67, roi: 72.4, totalBets: 198, yearsActive: 4.2, totalInvested: 120000 },
+    { username: "gridiron_guru", primarySport: "NFL", followers: 5400, winRate: 59, roi: 41.5, totalBets: 223, yearsActive: 2.8, totalInvested: 35000 },
+    { username: "touchdown_tony", primarySport: "NFL", followers: 3800, winRate: 56, roi: 27.3, totalBets: 267, yearsActive: 1.5, totalInvested: 22000 },
+    { username: "pigskin_pro", primarySport: "NFL", followers: 7200, winRate: 62, roi: 45.8, totalBets: 189, yearsActive: 3.1, totalInvested: 48000 },
+    { username: "redzone_rick", primarySport: "NFL", followers: 4100, winRate: 57, roi: 28.9, totalBets: 234, yearsActive: 1.2, totalInvested: 18000 },
+    { username: "fourth_down", primarySport: "NBA", followers: 2900, winRate: 55, roi: 26.4, totalBets: 201, yearsActive: 0.9, totalInvested: 15000 },
+    { username: "endzone_ed", primarySport: "NFL", followers: 1800, winRate: 54, roi: 24.7, totalBets: 178, yearsActive: 0.6, totalInvested: 12000 },
+    { username: "sarah_sports", primarySport: "NBA", followers: 11200, winRate: 63, roi: 67.3, totalBets: 298, yearsActive: 3.8, totalInvested: 95000 },
+    { username: "rachel_hoops", primarySport: "NBA", followers: 9800, winRate: 65, roi: 69.8, totalBets: 256, yearsActive: 3.2, totalInvested: 78000 },
+    { username: "bucket_betty", primarySport: "NBA", followers: 7600, winRate: 60, roi: 42.1, totalBets: 289, yearsActive: 2.5, totalInvested: 44000 },
+    { username: "swish_sam", primarySport: "NBA", followers: 6200, winRate: 59, roi: 40.5, totalBets: 245, yearsActive: 2.0, totalInvested: 38000 },
+    { username: "dunk_drew", primarySport: "NBA", followers: 8400, winRate: 62, roi: 54.9, totalBets: 267, yearsActive: 2.9, totalInvested: 56000 },
+    { username: "court_queen", primarySport: "NBA", followers: 4900, winRate: 58, roi: 39.2, totalBets: 223, yearsActive: 1.7, totalInvested: 31000 },
+    { username: "hoop_hunter", primarySport: "Soccer", followers: 3500, winRate: 56, roi: 37.8, totalBets: 198, yearsActive: 1.3, totalInvested: 24000 },
+    { username: "three_pointer", primarySport: "NBA", followers: 5800, winRate: 61, roi: 43.4, totalBets: 234, yearsActive: 2.3, totalInvested: 41000 },
+    { username: "alley_oop", primarySport: "MLB", followers: 2700, winRate: 55, roi: 25.9, totalBets: 187, yearsActive: 0.8, totalInvested: 16000 },
+    { username: "slam_specialist", primarySport: "NBA", followers: 1950, winRate: 53, roi: 23.2, totalBets: 165, yearsActive: 0.5, totalInvested: 11000 },
+    { username: "j_thompson", primarySport: "Soccer", followers: 10500, winRate: 62, roi: 56.7, totalBets: 276, yearsActive: 3.4, totalInvested: 82000 },
+    { username: "futbol_frank", primarySport: "Soccer", followers: 8700, winRate: 60, roi: 53.5, totalBets: 298, yearsActive: 2.7, totalInvested: 67000 },
+    { username: "goal_getter", primarySport: "Soccer", followers: 6900, winRate: 59, roi: 41.8, totalBets: 245, yearsActive: 2.2, totalInvested: 45000 },
+    { username: "midfield_mike", primarySport: "Soccer", followers: 5600, winRate: 58, roi: 40.3, totalBets: 267, yearsActive: 1.9, totalInvested: 39000 },
+    { username: "striker_steve", primarySport: "Soccer", followers: 7800, winRate: 61, roi: 44.6, totalBets: 223, yearsActive: 2.6, totalInvested: 52000 },
+    { username: "keeper_kelly", primarySport: "Soccer", followers: 4200, winRate: 57, roi: 38.4, totalBets: 189, yearsActive: 1.6, totalInvested: 29000 },
+    { username: "pitch_perfect", primarySport: "Soccer", followers: 3100, winRate: 56, roi: 36.7, totalBets: 201, yearsActive: 1.4, totalInvested: 25000 },
+    { username: "corner_kick", primarySport: "MLB", followers: 2400, winRate: 54, roi: 25.1, totalBets: 178, yearsActive: 0.7, totalInvested: 14000 },
+    { username: "penalty_pro", primarySport: "Soccer", followers: 5300, winRate: 59, roi: 41.2, totalBets: 234, yearsActive: 2.1, totalInvested: 43000 },
+    { username: "net_finder", primarySport: "Soccer", followers: 1700, winRate: 53, roi: 22.8, totalBets: 156, yearsActive: 0.4, totalInvested: 10000 },
+    { username: "stats_sam", primarySport: "MLB", followers: 9400, winRate: 61, roi: 55.1, totalBets: 312, yearsActive: 3.3, totalInvested: 88000 },
+    { username: "diamond_dave", primarySport: "MLB", followers: 7900, winRate: 59, roi: 52.4, totalBets: 289, yearsActive: 2.8, totalInvested: 71000 },
+    { username: "homer_harry", primarySport: "MLB", followers: 6500, winRate: 58, roi: 49.9, totalBets: 256, yearsActive: 2.4, totalInvested: 58000 },
+    { username: "bases_loaded", primarySport: "MLB", followers: 5100, winRate: 57, roi: 38.6, totalBets: 234, yearsActive: 1.8, totalInvested: 36000 },
+    { username: "curve_ball", primarySport: "MLB", followers: 7200, winRate: 60, roi: 53.7, totalBets: 278, yearsActive: 2.9, totalInvested: 65000 },
+    { username: "fastball_fred", primarySport: "MLB", followers: 4700, winRate: 56, roi: 37.2, totalBets: 212, yearsActive: 1.5, totalInvested: 32000 },
+    { username: "strike_zone", primarySport: "NHL", followers: 3900, winRate: 55, roi: 36.5, totalBets: 198, yearsActive: 1.3, totalInvested: 27000 },
+    { username: "grand_slam", primarySport: "MLB", followers: 6100, winRate: 59, roi: 41.5, totalBets: 245, yearsActive: 2.2, totalInvested: 47000 },
+    { username: "world_series", primarySport: "MLB", followers: 2800, winRate: 54, roi: 24.9, totalBets: 187, yearsActive: 0.9, totalInvested: 17000 },
+    { username: "batting_boss", primarySport: "MLB", followers: 2100, winRate: 53, roi: 23.5, totalBets: 165, yearsActive: 0.6, totalInvested: 13000 },
+    { username: "kelly_picks", primarySport: "UFC", followers: 8200, winRate: 60, roi: 54.3, totalBets: 198, yearsActive: 2.7, totalInvested: 62000 },
+    { username: "ufc_ultimate", primarySport: "UFC", followers: 6800, winRate: 58, roi: 50.7, totalBets: 167, yearsActive: 2.3, totalInvested: 54000 },
+    { username: "tennis_ace", primarySport: "Tennis", followers: 5400, winRate: 57, roi: 49.1, totalBets: 223, yearsActive: 2.0, totalInvested: 49000 },
+    { username: "hockey_hero", primarySport: "NHL", followers: 7100, winRate: 59, roi: 52.8, totalBets: 245, yearsActive: 2.6, totalInvested: 59000 },
+    { username: "golf_guru", primarySport: "Golf", followers: 4600, winRate: 56, roi: 47.6, totalBets: 189, yearsActive: 1.9, totalInvested: 46000 },
+    { username: "mma_master", primarySport: "UFC", followers: 5900, winRate: 58, roi: 51.3, totalBets: 201, yearsActive: 2.4, totalInvested: 51000 },
+    { username: "puck_pro", primarySport: "NHL", followers: 3700, winRate: 55, roi: 36.2, totalBets: 178, yearsActive: 1.4, totalInvested: 28000 },
+    { username: "knockout_king", primarySport: "UFC", followers: 4300, winRate: 57, roi: 38.5, totalBets: 156, yearsActive: 1.6, totalInvested: 34000 },
+    { username: "birdie_boss", primarySport: "Golf", followers: 2600, winRate: 54, roi: 25.4, totalBets: 145, yearsActive: 0.8, totalInvested: 15000 },
+    { username: "sports_sam", primarySport: "Multi", followers: 9700, winRate: 71, roi: 85.9, totalBets: 334, yearsActive: 4.5, totalInvested: 145000 },
   ];
 
-  return bettors.map((bettor, index) => ({
-    ...bettor,
-    id: index + 1,
-    verified: bettor.followers > 5000,
-    recentPerformance: Array.from({ length: 15 }, () => 
-      Math.random() < (bettor.winRate / 100) ? (1 + Math.random() * 8) : -(1 + Math.random() * 5)
-    )
-  }));
+  return bettors.map((bettor, index) => {
+    // Generate 1-5 sports per bettor, always including primary sport
+    const numSports = bettor.primarySport === "Multi" ? 8 : Math.floor(Math.random() * 3) + 1; // 1-3 sports
+    const otherSports = allSports.filter(s => s !== bettor.primarySport);
+    const additionalSports = otherSports.sort(() => Math.random() - 0.5).slice(0, numSports - 1);
+    const sports = [bettor.primarySport, ...additionalSports];
+    
+    return {
+      ...bettor,
+      id: index + 1,
+      sports,
+      verified: bettor.followers > 5000,
+      badge: getBadge(bettor.yearsActive, bettor.winRate, bettor.totalInvested),
+      recentPerformance: Array.from({ length: 15 }, () => 
+        Math.random() < (bettor.winRate / 100) ? (1 + Math.random() * 8) : -(1 + Math.random() * 5)
+      )
+    };
+  });
 };
 
 const Leaderboard = () => {
@@ -89,7 +107,7 @@ const Leaderboard = () => {
   const allBettors = generateBettors();
   const filteredBettors = selectedSport === "All" 
     ? allBettors 
-    : allBettors.filter(b => b.sport === selectedSport);
+    : allBettors.filter(b => b.sports.includes(selectedSport));
 
   // Sort by ROI descending
   const sortedBettors = [...filteredBettors].sort((a, b) => b.roi - a.roi);
@@ -162,7 +180,21 @@ const Leaderboard = () => {
                             </Badge>
                           )}
                         </div>
-                        <Badge variant="secondary" className="text-xs">{bettor.sport}</Badge>
+                        <div className="flex flex-wrap gap-1 mb-1">
+                          {bettor.sports.slice(0, 3).map((sport: string) => (
+                            <Badge key={sport} variant="secondary" className="text-[10px] px-1.5 py-0">
+                              {sport}
+                            </Badge>
+                          ))}
+                          {bettor.sports.length > 3 && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                              +{bettor.sports.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                        <Badge variant={bettor.badge.variant} className="text-[10px] px-1.5 py-0">
+                          {bettor.badge.label}
+                        </Badge>
                       </div>
                     </div>
 
