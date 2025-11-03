@@ -153,7 +153,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center text-sm text-muted-foreground">
-          <p className="mb-2">BetIQ enforces strict compliance with all U.S. federal and state betting regulations.</p>
+          <p className="mb-2">BettrMind enforces strict compliance with all U.S. federal and state betting regulations.</p>
           <p>You must be of legal betting age in your state to participate. Gamble responsibly.</p>
         </div>
       </footer>

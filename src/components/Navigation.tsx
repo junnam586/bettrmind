@@ -22,7 +22,7 @@ const Navigation = () => {
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold text-gradient">BetIQ</span>
+            <span className="text-xl font-bold text-gradient">BettrMind</span>
           </Link>
           
           <div className="hidden md:flex items-center gap-6">
@@ -40,7 +40,7 @@ const Navigation = () => {
                   }`}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{item.label}</span>
+                  <span className="text-xs font-medium">{item.label}</span>
                 </Link>
               );
             })}
