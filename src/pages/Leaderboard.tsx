@@ -4,6 +4,7 @@ import { TrendingUp, Users, Trophy, ArrowUp, Target } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
@@ -38,7 +39,7 @@ const generateBettors = () => {
     { username: "j_thompson", sport: "Soccer", followers: 10500, winRate: 62, roi: 26.7, totalBets: 276 },
     { username: "futbol_frank", sport: "Soccer", followers: 8700, winRate: 60, roi: 23.5, totalBets: 298 },
     { username: "goal_getter", sport: "Soccer", followers: 6900, winRate: 59, roi: 21.8, totalBets: 245 },
-    { username: "midfield_mike", sport: "Soccer", followers: 5600, winRate: 58, roi: 20.3, totalBeds: 267 },
+    { username: "midfield_mike", sport: "Soccer", followers: 5600, winRate: 58, roi: 20.3, totalBets: 267 },
     { username: "striker_steve", sport: "Soccer", followers: 7800, winRate: 61, roi: 24.6, totalBets: 223 },
     { username: "keeper_kelly", sport: "Soccer", followers: 4200, winRate: 57, roi: 18.4, totalBets: 189 },
     { username: "pitch_perfect", sport: "Soccer", followers: 3100, winRate: 56, roi: 16.7, totalBets: 201 },
@@ -93,36 +94,11 @@ const Leaderboard = () => {
   // Sort by ROI descending
   const sortedBettors = [...filteredBettors].sort((a, b) => b.roi - a.roi);
 
-  // Get initials for avatar
-  const getInitials = (username: string) => {
-    const parts = username.split('_');
-    if (parts.length >= 2) {
-      return (parts[0][0] + parts[1][0]).toUpperCase();
-    }
-    return username.substring(0, 2).toUpperCase();
-  };
-
-  // Get avatar color based on username
-  const getAvatarColor = (username: string) => {
-    const colors = [
-      'bg-blue-500',
-      'bg-purple-500',
-      'bg-green-500',
-      'bg-orange-500',
-      'bg-pink-500',
-      'bg-indigo-500',
-      'bg-teal-500',
-      'bg-cyan-500',
-    ];
-    const hash = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    return colors[hash % colors.length];
-  };
-
   return (
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 text-gradient">Top Bettors Leaderboard</h1>
           <p className="text-muted-foreground">Discover and follow {allBettors.length} verified sports bettors</p>
@@ -142,48 +118,55 @@ const Leaderboard = () => {
           ))}
         </div>
 
-        <div className="space-y-3">
+        <div className="space-y-4">
           {sortedBettors.map((bettor, index) => {
             const chartData = bettor.recentPerformance.map((value, i) => ({ index: i, value }));
             const displayRank = index + 1;
-            const avatar = `/images/avatars/avatar-${(index % 24) + 1}.jpg`;
+            const avatarNum = (bettor.id % 24) + 1;
             
             return (
               <Card 
                 key={bettor.id} 
-                className="gradient-card border-border hover:border-primary/30 transition-all duration-500 hover:glow-premium"
+                className="gradient-card border-border hover:border-primary/30 transition-all duration-300 hover:glow-premium"
               >
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row md:items-center gap-6">
-                    {/* Rank and Avatar */}
-                    <div className="flex items-center gap-4 md:w-56">
-                      <div className="text-3xl font-bold text-muted-foreground w-12 text-center">
+                <CardContent className="p-8">
+                  <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+                    {/* Rank, Avatar and Name Section - Fixed Width */}
+                    <div className="flex items-center gap-5 lg:w-80">
+                      <div className="text-4xl font-bold text-muted-foreground min-w-[60px] text-center">
                         #{displayRank}
                       </div>
-                      <img
-                        src={avatar}
-                        alt={`Profile photo of @${bettor.username}`}
-                        className="w-16 h-16 rounded-full object-cover ring-1 ring-border flex-shrink-0"
-                        loading="lazy"
-                      />
+                      
+                      <Avatar className="w-20 h-20 ring-2 ring-border">
+                        <AvatarImage 
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${bettor.username}&backgroundColor=b6e3f4,c0aede,d1d4f9`}
+                          alt={bettor.username}
+                        />
+                        <AvatarFallback className="text-lg font-bold">
+                          {bettor.username.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-bold truncate">@{bettor.username}</h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h3 className="text-xl font-bold text-foreground">
+                            @{bettor.username}
+                          </h3>
                           {bettor.verified && (
-                            <Badge variant="outline" className="border-primary/50 text-primary text-xs">
+                            <Badge variant="outline" className="border-primary/50 text-primary text-xs shrink-0">
                               ✓
                             </Badge>
                           )}
                         </div>
-                        <Badge variant="secondary" className="text-xs">{bettor.sport}</Badge>
+                        <Badge variant="secondary" className="text-sm">{bettor.sport}</Badge>
                       </div>
                     </div>
 
-                    {/* Performance Chart */}
-                    <div className="flex-1 md:min-w-0 md:max-w-xs">
-                      <div className="glass-card rounded-lg p-3">
-                        <div className="text-xs text-muted-foreground mb-2">15-Bet Trend</div>
-                        <div className="h-12 w-full">
+                    {/* Performance Chart - Flexible */}
+                    <div className="flex-1 lg:min-w-[280px] lg:max-w-md">
+                      <div className="glass-card rounded-lg p-4 h-full">
+                        <div className="text-sm font-medium text-muted-foreground mb-3">15-Bet Performance Trend</div>
+                        <div className="h-20 w-full">
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={chartData}>
                               <YAxis hide domain={['auto', 'auto']} />
@@ -191,7 +174,7 @@ const Leaderboard = () => {
                                 type="monotone"
                                 dataKey="value"
                                 stroke="hsl(142 76% 36%)"
-                                strokeWidth={2}
+                                strokeWidth={2.5}
                                 dot={false}
                                 isAnimationActive={false}
                               />
@@ -201,39 +184,39 @@ const Leaderboard = () => {
                       </div>
                     </div>
 
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 flex-1">
-                      <div className="text-center p-3 rounded-lg bg-success/10 border border-success/20">
-                        <div className="flex items-center justify-center gap-1 text-success font-bold text-xl mb-1">
-                          <ArrowUp className="w-4 h-4" />
+                    {/* Stats Grid - Fixed Width */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:w-[600px]">
+                      <div className="text-center p-4 rounded-lg bg-success/10 border border-success/20 min-h-[90px] flex flex-col justify-center">
+                        <div className="flex items-center justify-center gap-1 text-success font-bold text-2xl mb-1">
+                          <ArrowUp className="w-5 h-5" />
                           +{bettor.roi}%
                         </div>
-                        <div className="text-xs text-muted-foreground">ROI</div>
+                        <div className="text-sm text-muted-foreground">ROI</div>
                       </div>
 
-                      <div className="text-center p-3 rounded-lg glass-card">
-                        <div className="font-bold text-xl mb-1">{bettor.winRate}%</div>
-                        <div className="text-xs text-muted-foreground">Win Rate</div>
+                      <div className="text-center p-4 rounded-lg glass-card min-h-[90px] flex flex-col justify-center">
+                        <div className="font-bold text-2xl mb-1">{bettor.winRate}%</div>
+                        <div className="text-sm text-muted-foreground">Win Rate</div>
                       </div>
 
-                      <div className="text-center p-3 rounded-lg glass-card">
-                        <div className="flex items-center justify-center gap-1 font-bold text-xl mb-1">
-                          <Users className="w-4 h-4" />
+                      <div className="text-center p-4 rounded-lg glass-card min-h-[90px] flex flex-col justify-center">
+                        <div className="flex items-center justify-center gap-1 font-bold text-2xl mb-1">
+                          <Users className="w-5 h-5" />
                           {bettor.followers > 1000 ? `${(bettor.followers / 1000).toFixed(1)}K` : bettor.followers}
                         </div>
-                        <div className="text-xs text-muted-foreground">Followers</div>
+                        <div className="text-sm text-muted-foreground">Followers</div>
                       </div>
 
-                      <div className="text-center p-3 rounded-lg glass-card">
-                        <div className="font-bold text-xl mb-1">{bettor.totalBets}</div>
-                        <div className="text-xs text-muted-foreground">Total Bets</div>
+                      <div className="text-center p-4 rounded-lg glass-card min-h-[90px] flex flex-col justify-center">
+                        <div className="font-bold text-2xl mb-1">{bettor.totalBets}</div>
+                        <div className="text-sm text-muted-foreground">Total Bets</div>
                       </div>
                     </div>
 
-                    {/* Action Button */}
-                    <div className="md:w-40 flex-shrink-0">
+                    {/* Action Button - Fixed Width */}
+                    <div className="lg:w-44 w-full">
                       <Link to={`/bettor/${bettor.username}`}>
-                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 text-base">
                           <Target className="w-4 h-4 mr-2" />
                           View Bets
                         </Button>
