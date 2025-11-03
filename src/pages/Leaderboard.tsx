@@ -181,11 +181,7 @@ const Leaderboard = () => {
                             </Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <BadgeIcon label={bettor.badge.label} className="w-6 h-6" />
-                          <span className="text-xs font-semibold">{bettor.badge.label.replace(/^[🥉⭐🏆💎]\s/, '')}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 mb-1">
                           {bettor.sports.slice(0, 3).map((sport: string) => (
                             <Badge key={sport} variant="secondary" className="text-[10px] px-1.5 py-0">
                               {sport}
@@ -196,6 +192,10 @@ const Leaderboard = () => {
                               +{bettor.sports.length - 3}
                             </Badge>
                           )}
+                        </div>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <BadgeIcon label={bettor.badge.label} className="w-5 h-5" />
+                          <span className="text-xs font-semibold">{bettor.badge.label.replace(/^[🥉⭐🏆💎]\s/, '')}</span>
                         </div>
                       </div>
                     </div>
