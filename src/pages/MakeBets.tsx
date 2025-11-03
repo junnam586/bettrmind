@@ -70,7 +70,7 @@ const generateBettors = () => {
         : Math.floor(150 + Math.random() * 5000); // 150-5K
       
       const winRate = Math.floor(52 + Math.random() * 16); // 52-68%
-      const roi = (5 + Math.random() * 35).toFixed(1); // 5-40%
+      const roi = (15 + Math.random() * 60).toFixed(1); // 15-75%
       const totalBets = Math.floor(150 + Math.random() * 350); // 150-500
       
       // Generate realistic performance data with ups and downs
@@ -205,18 +205,10 @@ const MakeBets = () => {
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
                             <YAxis hide domain={['auto', 'auto']} />
-                            <defs>
-                              <linearGradient id={`makebets-gradient-${bettor.id}`} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="hsl(142 76% 36%)" />
-                                <stop offset="50%" stopColor="hsl(142 76% 36%)" />
-                                <stop offset="50%" stopColor="hsl(0 84% 60%)" />
-                                <stop offset="100%" stopColor="hsl(0 84% 60%)" />
-                              </linearGradient>
-                            </defs>
                             <Line
                               type="monotone"
                               dataKey="value"
-                              stroke={`url(#makebets-gradient-${bettor.id})`}
+                              stroke="hsl(142 76% 36%)"
                               strokeWidth={2}
                               dot={false}
                               isAnimationActive={false}
