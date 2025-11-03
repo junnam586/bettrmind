@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, TrendingUp, LayoutDashboard, Wallet, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.png";
 
 const Navigation = () => {
   const location = useLocation();
@@ -17,8 +18,13 @@ const Navigation = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/logo.png" alt="BettrMind Logo" className="h-8 w-auto opacity-90" />
+          <Link to="/" className="flex items-center gap-3 group">
+            <img 
+              src={logo} 
+              alt="BettrMind Logo" 
+              className="h-10 w-auto brightness-0 dark:brightness-100 opacity-70 group-hover:opacity-100 transition-opacity"
+              style={{ filter: 'brightness(0) saturate(100%) invert(27%) sepia(8%) saturate(1751%) hue-rotate(169deg) brightness(94%) contrast(89%)' }}
+            />
           </Link>
           
           <div className="hidden md:flex items-center gap-3">
