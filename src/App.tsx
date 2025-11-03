@@ -9,6 +9,10 @@ import Dashboard from "./pages/Dashboard";
 import Wallet from "./pages/Wallet";
 import MakeBets from "./pages/MakeBets";
 import BettorProfile from "./pages/BettorProfile";
+import CreateBet from "./pages/CreateBet";
+import BrowseBets from "./pages/BrowseBets";
+import MyCopiers from "./pages/MyCopiers";
+import GetCopiedHub from "./pages/GetCopiedHub";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +30,10 @@ const App = () => (
           <Route path="/wallet" element={<Wallet />} />
           <Route path="/make-bets" element={<MakeBets />} />
           <Route path="/bettor/:username" element={<BettorProfile />} />
+          <Route path="/get-copied" element={<GetCopiedHub />} />
+          <Route path="/create-bet" element={<CreateBet />} />
+          <Route path="/browse-bets" element={<BrowseBets />} />
+          <Route path="/my-copiers" element={<MyCopiers />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
