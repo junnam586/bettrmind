@@ -59,20 +59,20 @@ const BettingBasket = () => {
     }
   };
 
-  const handlePlaceParlay = () => {
-    if (basket.length < 2) {
-      toast({
-        title: 'Need More Bets',
-        description: 'Add at least 2 bets to create a parlay',
-        variant: 'destructive',
-      });
-      return;
-    }
+  const handlePlaceBet = () => {
+    if (basket.length === 0) return;
 
-    toast({
-      title: 'Parlay Created!',
-      description: `${basket.length}-leg parlay with ${calculateParlayOdds().toFixed(2)}x odds`,
-    });
+    if (basket.length === 1) {
+      toast({
+        title: 'Bet Placed!',
+        description: `Single bet with ${basket[0].odds.toFixed(2)}x odds`,
+      });
+    } else {
+      toast({
+        title: 'Parlay Created!',
+        description: `${basket.length}-leg parlay with ${calculateParlayOdds().toFixed(2)}x odds`,
+      });
+    }
     clearBasket();
     setAiScore(null);
   };
@@ -94,12 +94,12 @@ const BettingBasket = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Card className="w-96 shadow-2xl border-primary/20">
-        <CardHeader className="pb-3">
+      <Card className="w-80 shadow-2xl border-primary/20">
+        <CardHeader className="pb-2 py-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <ShoppingBasket className="w-5 h-5" />
-              Parlay Basket ({basket.length})
+            <CardTitle className="flex items-center gap-2 text-base">
+              <ShoppingBasket className="w-4 h-4" />
+              Basket ({basket.length})
             </CardTitle>
             <Button
               variant="ghost"
@@ -110,9 +110,9 @@ const BettingBasket = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {/* Bets List */}
-          <div className="max-h-64 overflow-y-auto space-y-2">
+          <div className="max-h-48 overflow-y-auto space-y-2">
             {basket.map((bet) => (
               <div
                 key={bet.id}
@@ -151,24 +151,18 @@ const BettingBasket = () => {
 
           {basket.length > 0 && (
             <>
-              {/* Parlay Summary */}
-              <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
+              {/* Bet Summary */}
+              <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Parlay Odds</span>
+                  <span className="text-sm font-medium">{basket.length > 1 ? 'Parlay Odds' : 'Odds'}</span>
                   <span className="text-lg font-bold text-primary">
                     {calculateParlayOdds().toFixed(2)}x
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">$100 bet returns</span>
+                <div className="flex items-center justify-between text-xs">
+                  <span className="text-muted-foreground">$100 returns</span>
                   <span className="font-bold text-success">
                     ${calculatePayout(100)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">$500 bet returns</span>
-                  <span className="font-bold text-success">
-                    ${calculatePayout(500)}
                   </span>
                 </div>
               </div>
@@ -204,13 +198,14 @@ const BettingBasket = () => {
                   disabled={isLoadingAI}
                   variant="outline"
                   className="w-full"
+                  size="sm"
                 >
                   <Sparkles className="w-4 h-4 mr-2" />
                   {isLoadingAI ? 'Analyzing...' : 'Get AI Score'}
                 </Button>
-                <Button onClick={handlePlaceParlay} className="w-full" size="lg">
+                <Button onClick={handlePlaceBet} className="w-full">
                   <TrendingUp className="w-4 h-4 mr-2" />
-                  Place {basket.length}-Leg Parlay
+                  {basket.length === 1 ? 'Place Bet' : `Place ${basket.length}-Leg Parlay`}
                 </Button>
                 <Button
                   onClick={clearBasket}
