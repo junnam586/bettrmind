@@ -35,15 +35,32 @@ export const BadgeIcon = ({ label, className = "w-6 h-6" }: BadgeIconProps) => {
   }
 
   return (
-    <img 
-      src={badgeImage} 
-      alt={label} 
+    <div 
       className={className}
       style={{ 
-        objectFit: "contain",
-        filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.15))",
-        opacity: 0.95
+        position: "relative",
+        display: "inline-block"
       }}
-    />
+    >
+      <div 
+        style={{
+          position: "absolute",
+          inset: 0,
+          backgroundColor: "hsl(var(--background))",
+          borderRadius: "50%",
+          zIndex: -1
+        }}
+      />
+      <img 
+        src={badgeImage} 
+        alt={label} 
+        style={{ 
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.15))"
+        }}
+      />
+    </div>
   );
 };
