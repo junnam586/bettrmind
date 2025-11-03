@@ -2,6 +2,7 @@ import { TrendingUp, TrendingDown, DollarSign, Target, Calendar, ArrowUp, ArrowD
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
+import { BadgeIcon } from "@/components/BadgeIcon";
 
 // Generate badge based on criteria
 const getBadge = (yearsActive: number, winRate: number, totalInvested: number) => {
@@ -137,9 +138,10 @@ const Dashboard = () => {
                 <Trophy className="w-5 h-5 text-primary" />
                 <span className="text-lg font-bold">Rank #{userProfile.leaderboardRank}</span>
               </div>
-              <Badge variant={userBadge.variant} className="text-sm">
-                {userBadge.label}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <BadgeIcon label={userBadge.label} className="w-8 h-8" />
+                <span className="text-sm font-semibold">{userBadge.label.replace(/^[🥉⭐🏆💎]\s/, '')}</span>
+              </div>
               <div className="flex gap-1">
                 {userProfile.sports.map((sport) => (
                   <Badge key={sport} variant="secondary" className="text-xs">

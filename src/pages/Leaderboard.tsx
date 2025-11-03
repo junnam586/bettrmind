@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, Users, Trophy, ArrowUp, Target } from "lucide-react";
+import { Users, Target, ArrowUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
+import { BadgeIcon } from "@/components/BadgeIcon";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 // Generate 40-50 realistic bettor profiles
@@ -192,9 +193,10 @@ const Leaderboard = () => {
                             </Badge>
                           )}
                         </div>
-                        <Badge variant={bettor.badge.variant} className="text-[10px] px-1.5 py-0">
-                          {bettor.badge.label}
-                        </Badge>
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <BadgeIcon label={bettor.badge.label} className="w-5 h-5" />
+                          <span className="text-xs font-semibold">{bettor.badge.label.replace(/^[🥉⭐🏆💎]\s/, '')}</span>
+                        </div>
                       </div>
                     </div>
 
