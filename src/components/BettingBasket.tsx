@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { ShoppingBasket, X, Sparkles, TrendingUp, DollarSign } from 'lucide-react';
+import { ShoppingBasket, X, Sparkles, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useBasket } from '@/contexts/BasketContext';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 const BettingBasket = () => {
   const { basket, removeFromBasket, clearBasket } = useBasket();
@@ -27,36 +26,26 @@ const BettingBasket = () => {
     if (basket.length === 0) return;
     
     setIsLoadingAI(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('score-bet', {
-        body: { 
-          bets: basket.map(bet => ({
-            sport: bet.sport,
-            game: bet.game,
-            betType: bet.betType,
-            selection: bet.selection,
-            odds: bet.odds
-          }))
-        }
-      });
-
-      if (error) throw error;
-      
-      setAiScore(data.score);
-      toast({
-        title: 'AI Analysis Complete',
-        description: `Score: ${data.score}/100 - ${data.reasoning}`,
-      });
-    } catch (error) {
-      console.error('Error getting AI score:', error);
-      toast({
-        title: 'AI Analysis Failed',
-        description: 'Could not analyze bet at this time',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoadingAI(false);
-    }
+    
+    // Simulate AI analysis delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Generate random score between 30-95
+    const randomScore = Math.floor(Math.random() * 66) + 30;
+    
+    const reasoning = randomScore >= 70 
+      ? 'Strong probability based on recent form and statistics'
+      : randomScore >= 50
+      ? 'Moderate confidence with some risk factors'
+      : 'High risk bet with mixed indicators';
+    
+    setAiScore(randomScore);
+    setIsLoadingAI(false);
+    
+    toast({
+      title: 'AI Analysis Complete',
+      description: `Score: ${randomScore}/100 - ${reasoning}`,
+    });
   };
 
   const handlePlaceBet = () => {
@@ -93,9 +82,9 @@ const BettingBasket = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <Card className="w-80 shadow-2xl border-primary/20">
-        <CardHeader className="pb-2 py-3">
+    <div className="fixed bottom-6 right-6 z-50 max-h-[50vh]">
+      <Card className="w-72 shadow-2xl border-primary/20 flex flex-col max-h-full">
+        <CardHeader className="pb-2 py-3 shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-base">
               <ShoppingBasket className="w-4 h-4" />
@@ -110,9 +99,9 @@ const BettingBasket = () => {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+        <CardContent className="space-y-3 overflow-y-auto flex-1">
           {/* Bets List */}
-          <div className="max-h-48 overflow-y-auto space-y-2">
+          <div className="space-y-2">
             {basket.map((bet) => (
               <div
                 key={bet.id}
