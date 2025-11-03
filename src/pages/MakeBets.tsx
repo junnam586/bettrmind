@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { TrendingUp, Users, Target, ArrowUp, Filter } from "lucide-react";
+import { TrendingUp, Users, Target, ArrowUp, Filter, DollarSign } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -90,7 +90,8 @@ const generateBettors = () => {
         bio: sportBios[index % sportBios.length],
         recentPerformance,
         recentVolume: `${Math.floor(10 + Math.random() * 90)}K`,
-        activeBets: Math.floor(3 + Math.random() * 12) // 3-15 active bets
+        activeBets: Math.floor(3 + Math.random() * 12), // 3-15 active bets
+        tipPercentage: Math.floor(5 + Math.random() * 11) // 5-15% tip
       });
     });
   });
@@ -246,6 +247,17 @@ const MakeBets = () => {
 
                     <div className="text-[10px] text-muted-foreground text-center pt-2 border-t border-border/50">
                       {bettor.totalBets} total bets tracked
+                    </div>
+
+                    {/* Tip Requirement */}
+                    <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/20">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <DollarSign className="w-3.5 h-3.5 text-primary" />
+                        <span className="font-semibold text-primary text-sm">{bettor.tipPercentage}% Tip Required</span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground text-center mt-0.5">
+                        Per bet copied
+                      </p>
                     </div>
 
                     {/* Action Button */}
