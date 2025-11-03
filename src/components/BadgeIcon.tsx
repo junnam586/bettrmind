@@ -41,8 +41,8 @@ export const BadgeIcon = ({ label, className = "w-6 h-6" }: BadgeIconProps) => {
       className={className}
       style={{ 
         objectFit: "contain",
-        mixBlendMode: "multiply",
-        opacity: 0.9
+        filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.15))",
+        opacity: 0.95
       }}
     />
   );
