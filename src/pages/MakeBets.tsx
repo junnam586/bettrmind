@@ -205,10 +205,18 @@ const MakeBets = () => {
                         <ResponsiveContainer width="100%" height="100%">
                           <LineChart data={chartData}>
                             <YAxis hide domain={['auto', 'auto']} />
+                            <defs>
+                              <linearGradient id={`makebets-gradient-${bettor.id}`} x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="hsl(142 76% 36%)" />
+                                <stop offset="50%" stopColor="hsl(142 76% 36%)" />
+                                <stop offset="50%" stopColor="hsl(0 84% 60%)" />
+                                <stop offset="100%" stopColor="hsl(0 84% 60%)" />
+                              </linearGradient>
+                            </defs>
                             <Line
                               type="monotone"
                               dataKey="value"
-                              stroke="hsl(142 76% 36%)"
+                              stroke={`url(#makebets-gradient-${bettor.id})`}
                               strokeWidth={2}
                               dot={false}
                               isAnimationActive={false}
