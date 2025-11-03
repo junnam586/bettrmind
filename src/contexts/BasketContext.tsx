@@ -8,7 +8,7 @@ export interface BetInBasket {
   odds: number;
   selection: string;
   tipPercentage?: number;
-  bettorUsername?: string;
+  bettrUsername?: string;
 }
 
 interface BasketContextType {

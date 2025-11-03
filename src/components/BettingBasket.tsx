@@ -131,9 +131,9 @@ const BettingBasket = () => {
                   <p className="text-xs text-muted-foreground">
                     {bet.betType} - {bet.selection}
                   </p>
-                  {bet.bettorUsername && (
+                  {bet.bettrUsername && (
                     <p className="text-xs text-muted-foreground mt-1">
-                      From @{bet.bettorUsername}
+                      From @{bet.bettrUsername}
                       {bet.tipPercentage && ` (${bet.tipPercentage}% tip)`}
                     </p>
                   )}

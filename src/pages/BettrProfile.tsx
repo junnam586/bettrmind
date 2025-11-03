@@ -90,13 +90,13 @@ const generateActiveBets = (sport: string) => {
   });
 };
 
-const BettorProfile = () => {
+const BettrProfile = () => {
   const { username } = useParams();
   const { addToBasket, isInBasket } = useBasket();
   const [selectedBets, setSelectedBets] = useState<string[]>([]);
   
-  // Mock bettor data - in real app would fetch from API
-  const bettor = {
+  // Mock bettr data - in real app would fetch from API
+  const bettr = {
     username: username || "mike_analytics",
     sport: "NFL",
     roi: "+32.5%",
@@ -113,14 +113,14 @@ const BettorProfile = () => {
     bestStreak: 12
   };
 
-  const activeBets = generateActiveBets(bettor.sport);
-  const chartData = bettor.recentPerformance.map((value, index) => ({ index, value }));
+  const activeBets = generateActiveBets(bettr.sport);
+  const chartData = bettr.recentPerformance.map((value, index) => ({ index, value }));
 
   // Generate avatar based on username
   const avatarStyles = ['bottts', 'identicon', 'shapes', 'avataaars-neutral', 'pixel-art'];
-  const avatarId = bettor.username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const avatarId = bettr.username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const style = avatarStyles[avatarId % avatarStyles.length];
-  const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettor.username}`;
+  const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettr.username}`;
 
   const toggleBetSelection = (betId: string) => {
     setSelectedBets(prev => 
@@ -151,13 +151,13 @@ const BettorProfile = () => {
 
         addToBasket({
           id: betId,
-          sport: bettor.sport,
+          sport: bettr.sport,
           game: bet.matchup,
           betType: bet.betType,
           selection: bet.pick,
           odds: oddsValue,
           tipPercentage: 10, // Default tip percentage
-          bettorUsername: bettor.username
+          bettrUsername: bettr.username
         });
         addedCount++;
       }
@@ -197,40 +197,40 @@ const BettorProfile = () => {
                   <Avatar className="w-20 h-20 ring-2 ring-border">
                     <AvatarImage 
                       src={avatarUrl}
-                      alt={bettor.username}
+                      alt={bettr.username}
                     />
                     <AvatarFallback className="text-lg font-bold">
-                      {bettor.username.substring(0, 2).toUpperCase()}
+                      {bettr.username.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <h1 className="text-3xl font-bold">@{bettor.username}</h1>
+                      <h1 className="text-3xl font-bold">@{bettr.username}</h1>
                       <Badge variant="outline" className="border-primary text-primary">Verified</Badge>
-                      <Badge variant="secondary">{bettor.sport}</Badge>
+                      <Badge variant="secondary">{bettr.sport}</Badge>
                     </div>
                   </div>
                 </div>
-                <p className="text-muted-foreground mb-4">{bettor.bio}</p>
+                <p className="text-muted-foreground mb-4">{bettr.bio}</p>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center p-3 rounded-lg bg-success/10 border border-success/20">
-                    <div className="text-success font-bold text-2xl mb-1">{bettor.roi}</div>
+                    <div className="text-success font-bold text-2xl mb-1">{bettr.roi}</div>
                     <div className="text-xs text-muted-foreground">90d ROI</div>
                   </div>
                   <div className="text-center p-3 rounded-lg glass-card">
-                    <div className="font-bold text-2xl mb-1">{bettor.winRate}%</div>
+                    <div className="font-bold text-2xl mb-1">{bettr.winRate}%</div>
                     <div className="text-xs text-muted-foreground">Win Rate</div>
                   </div>
                   <div className="text-center p-3 rounded-lg glass-card">
                     <div className="flex items-center justify-center gap-1 font-bold text-2xl mb-1">
                       <Users className="w-5 h-5" />
-                      {bettor.followers}
+                      {bettr.followers}
                     </div>
                     <div className="text-xs text-muted-foreground">Followers</div>
                   </div>
                   <div className="text-center p-3 rounded-lg glass-card">
-                    <div className="font-bold text-2xl mb-1">{bettor.totalBets}</div>
+                    <div className="font-bold text-2xl mb-1">{bettr.totalBets}</div>
                     <div className="text-xs text-muted-foreground">Total Bets</div>
                   </div>
                 </div>
@@ -257,11 +257,11 @@ const BettorProfile = () => {
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     <div>
                       <span className="text-muted-foreground">Avg Bet:</span>
-                      <span className="ml-1 font-medium">${bettor.avgBetSize}</span>
+                      <span className="ml-1 font-medium">${bettr.avgBetSize}</span>
                     </div>
                     <div>
                       <span className="text-muted-foreground">Streak:</span>
-                      <span className="ml-1 font-medium text-success">+{bettor.currentStreak}</span>
+                      <span className="ml-1 font-medium text-success">+{bettr.currentStreak}</span>
                     </div>
                   </div>
                 </div>
@@ -276,7 +276,7 @@ const BettorProfile = () => {
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5" />
-                @{bettor.username}'s Active Bets ({activeBets.length})
+                @{bettr.username}'s Active Bets ({activeBets.length})
               </CardTitle>
               {selectedBets.length > 0 && (
                 <Button onClick={handleAddToBasket} className="bg-primary hover:bg-primary/90">
@@ -348,4 +348,4 @@ const BettorProfile = () => {
   );
 };
 
-export default BettorProfile;
+export default BettrProfile;

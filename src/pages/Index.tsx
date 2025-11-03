@@ -9,13 +9,13 @@ const Index = () => {
   const features = [
     {
       icon: TrendingUp,
-      title: "Copy Top Bettors",
+      title: "Copy Top Bettrs",
       description: "Follow verified tipsters with proven track records and copy their bets automatically or manually.",
     },
     {
       icon: Shield,
       title: "Transparent Performance",
-      description: "Real-time analytics, ROI tracking, and comprehensive leaderboards show exactly how every bettor performs.",
+      description: "Real-time analytics, ROI tracking, and comprehensive leaderboards show exactly how every bettr performs.",
     },
     {
       icon: Zap,
@@ -49,7 +49,7 @@ const Index = () => {
       username: "TheAnalyst",
       roi: "+24.7%",
       followers: "1.2K",
-      bio: "Professional sports bettor since 2018. Expert in NFL game theory and advanced metrics.",
+      bio: "Professional sports bettr since 2018. Expert in NFL game theory and advanced metrics.",
       totalBets: 198,
       recentVolume: "38K",
       winRate: 55,
@@ -69,11 +69,11 @@ const Index = () => {
         <div className="max-w-7xl mx-auto relative">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              Copy Winning Bettors.<br />
+              Copy Winning Bettrs.<br />
               <span className="text-gradient">Pay Only When They Win.</span>
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              Turn your sports knowledge into consistent profits with real-time tracking. Let profitable bettors make money for you while you track every dollar.
+              Turn your sports knowledge into consistent profits with real-time tracking. Let profitable bettrs make money for you while you track every dollar.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/make-bets">
@@ -141,7 +141,7 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Start Winning?</h2>
           <p className="text-xl text-muted-foreground mb-8">
-            Join thousands of smart bettors already copying verified tipsters
+            Join thousands of smart bettrs already copying verified tipsters
           </p>
           <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg px-8">
             Get Started Free

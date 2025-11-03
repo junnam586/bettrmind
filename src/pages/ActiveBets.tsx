@@ -19,8 +19,8 @@ interface ActiveBet {
   status: "active" | "pending" | "won" | "lost";
   placedAt: string;
   isCopied: boolean;
-  originalBettor?: string;
-  originalBettorId?: number;
+  originalBettr?: string;
+  originalBettrId?: number;
   copiers?: Array<{ username: string; id: number; amount: number }>;
   potentialTipEarnings?: number;
 }
@@ -40,8 +40,8 @@ const mockActiveBets: ActiveBet[] = [
     status: "active",
     placedAt: "2h ago",
     isCopied: true,
-    originalBettor: "SharpShooter23",
-    originalBettorId: 1,
+    originalBettr: "SharpShooter23",
+    originalBettrId: 1,
   },
   {
     id: 2,
@@ -57,8 +57,8 @@ const mockActiveBets: ActiveBet[] = [
     status: "active",
     placedAt: "4h ago",
     isCopied: true,
-    originalBettor: "DataDriven",
-    originalBettorId: 2,
+    originalBettr: "DataDriven",
+    originalBettrId: 2,
   },
   {
     id: 3,
@@ -75,7 +75,7 @@ const mockActiveBets: ActiveBet[] = [
     placedAt: "1d ago",
     isCopied: false,
     copiers: [
-      { username: "bettor_mike", id: 101, amount: 150 },
+      { username: "bettr_mike", id: 101, amount: 150 },
       { username: "sports_sam", id: 102, amount: 200 },
       { username: "kelly_picks", id: 103, amount: 100 },
     ],
@@ -95,8 +95,8 @@ const mockActiveBets: ActiveBet[] = [
     status: "won",
     placedAt: "2d ago",
     isCopied: true,
-    originalBettor: "TheAnalyst",
-    originalBettorId: 3,
+    originalBettr: "TheAnalyst",
+    originalBettrId: 3,
   },
   {
     id: 5,
@@ -112,8 +112,8 @@ const mockActiveBets: ActiveBet[] = [
     status: "lost",
     placedAt: "3d ago",
     isCopied: true,
-    originalBettor: "SoccerPro",
-    originalBettorId: 4,
+    originalBettr: "SoccerPro",
+    originalBettrId: 4,
   },
   {
     id: 6,
@@ -149,8 +149,8 @@ const mockActiveBets: ActiveBet[] = [
     status: "active",
     placedAt: "6h ago",
     isCopied: true,
-    originalBettor: "FightPicks",
-    originalBettorId: 5,
+    originalBettr: "FightPicks",
+    originalBettrId: 5,
   },
 ];
 
@@ -265,7 +265,7 @@ const ActiveBets = () => {
               <div className="space-y-3">
                 {copiedBets.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
-                    You haven't copied any bets yet. Browse the marketplace to find bettors to follow!
+                    You haven't copied any bets yet. Browse the marketplace to find bettrs to follow!
                   </div>
                 ) : (
                   copiedBets.map(bet => {
@@ -292,13 +292,13 @@ const ActiveBets = () => {
                         <Badge variant="outline" className="text-xs">
                           {bet.betType}
                         </Badge>
-                        {bet.isCopied && bet.originalBettor && (
+                        {bet.isCopied && bet.originalBettr && (
                           <div className="flex items-center gap-1">
                             <Avatar className="w-4 h-4 ring-1 ring-border">
-                              <AvatarImage src={getAvatarUrl(bet.originalBettorId!, bet.originalBettor)} alt={bet.originalBettor} />
-                              <AvatarFallback className="text-[8px]">{bet.originalBettor.substring(0, 2).toUpperCase()}</AvatarFallback>
+                              <AvatarImage src={getAvatarUrl(bet.originalBettrId!, bet.originalBettr)} alt={bet.originalBettr} />
+                              <AvatarFallback className="text-[8px]">{bet.originalBettr.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
-                            <span className="text-[10px] text-muted-foreground">@{bet.originalBettor}</span>
+                            <span className="text-[10px] text-muted-foreground">@{bet.originalBettr}</span>
                           </div>
                         )}
                       </div>

@@ -22,7 +22,7 @@ const badgeMap: Record<string, string> = {
   "⭐ Sharpshooter": sharpshooterBadge,
   "⭐ High Roller": highrollerBadge,
   "🏆 Expert": expertBadge,
-  "💎 Master Bettor": masterBadge,
+  "💎 Master Bettr": masterBadge,
   "🏆 Pro Investor": proinvestorBadge,
   "💎 Elite Investor": eliteBadge,
 };

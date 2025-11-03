@@ -7,7 +7,7 @@ import Navigation from "@/components/Navigation";
 const getBadge = (yearsActive: number, winRate: number, totalInvested: number) => {
   if (totalInvested >= 100000) return { variant: "platinum" as const, label: "💎 Elite Investor" };
   if (totalInvested >= 50000) return { variant: "gold" as const, label: "🏆 Pro Investor" };
-  if (winRate >= 70) return { variant: "platinum" as const, label: "💎 Master Bettor" };
+  if (winRate >= 70) return { variant: "platinum" as const, label: "💎 Master Bettr" };
   if (winRate >= 65) return { variant: "gold" as const, label: "🏆 Expert" };
   if (totalInvested >= 10000) return { variant: "silver" as const, label: "⭐ High Roller" };
   if (winRate >= 60) return { variant: "silver" as const, label: "⭐ Sharpshooter" };

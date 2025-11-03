@@ -14,7 +14,7 @@ const getBadge = (yearsActive: number, winRate: number, totalInvested: number) =
   // Priority: investment > win rate > years
   if (totalInvested >= 100000) return { variant: "platinum" as const, label: "💎 Elite Investor" };
   if (totalInvested >= 50000) return { variant: "gold" as const, label: "🏆 Pro Investor" };
-  if (winRate >= 70) return { variant: "platinum" as const, label: "💎 Master Bettor" };
+  if (winRate >= 70) return { variant: "platinum" as const, label: "💎 Master Bettr" };
   if (winRate >= 65) return { variant: "gold" as const, label: "🏆 Expert" };
   if (totalInvested >= 10000) return { variant: "silver" as const, label: "⭐ High Roller" };
   if (winRate >= 60) return { variant: "silver" as const, label: "⭐ Sharpshooter" };
@@ -24,10 +24,10 @@ const getBadge = (yearsActive: number, winRate: number, totalInvested: number) =
   return { variant: "bronze" as const, label: "🥉 Rookie" };
 };
 
-const generateBettors = () => {
+const generateBettrs = () => {
   const allSports = ["NFL", "NBA", "Soccer", "MLB", "UFC", "NHL", "Tennis", "Golf"];
   
-  const bettors = [
+  const bettrs = [
     { username: "mike_analytics", primarySport: "NFL", followers: 12400, winRate: 64, roi: 58.5, totalBets: 287, yearsActive: 3.5, totalInvested: 85000 },
     { username: "betting_blake", primarySport: "NFL", followers: 8900, winRate: 61, roi: 44.2, totalBets: 245, yearsActive: 2.1, totalInvested: 42000 },
     { username: "david_odds", primarySport: "Soccer", followers: 6700, winRate: 58, roi: 39.8, totalBets: 312, yearsActive: 1.8, totalInvested: 28000 },
@@ -80,21 +80,21 @@ const generateBettors = () => {
     { username: "sports_sam", primarySport: "Multi", followers: 9700, winRate: 71, roi: 85.9, totalBets: 334, yearsActive: 4.5, totalInvested: 145000 },
   ];
 
-  return bettors.map((bettor, index) => {
-    // Generate 1-5 sports per bettor, always including primary sport
-    const numSports = bettor.primarySport === "Multi" ? 8 : Math.floor(Math.random() * 3) + 1; // 1-3 sports
-    const otherSports = allSports.filter(s => s !== bettor.primarySport);
+  return bettrs.map((bettr, index) => {
+    // Generate 1-5 sports per bettr, always including primary sport
+    const numSports = bettr.primarySport === "Multi" ? 8 : Math.floor(Math.random() * 3) + 1; // 1-3 sports
+    const otherSports = allSports.filter(s => s !== bettr.primarySport);
     const additionalSports = otherSports.sort(() => Math.random() - 0.5).slice(0, numSports - 1);
-    const sports = [bettor.primarySport, ...additionalSports];
+    const sports = [bettr.primarySport, ...additionalSports];
     
     return {
-      ...bettor,
+      ...bettr,
       id: index + 1,
       sports,
-      verified: bettor.followers > 5000,
-      badge: getBadge(bettor.yearsActive, bettor.winRate, bettor.totalInvested),
+      verified: bettr.followers > 5000,
+      badge: getBadge(bettr.yearsActive, bettr.winRate, bettr.totalInvested),
       recentPerformance: Array.from({ length: 15 }, () => 
-        Math.random() < (bettor.winRate / 100) ? (1 + Math.random() * 8) : -(1 + Math.random() * 5)
+        Math.random() < (bettr.winRate / 100) ? (1 + Math.random() * 8) : -(1 + Math.random() * 5)
       )
     };
   });
@@ -104,13 +104,13 @@ const Leaderboard = () => {
   const [selectedSport, setSelectedSport] = useState("All");
   const sports = ["All", "NFL", "NBA", "Soccer", "MLB", "UFC", "NHL", "Tennis", "Golf", "Multi"];
   
-  const allBettors = generateBettors();
-  const filteredBettors = selectedSport === "All" 
-    ? allBettors 
-    : allBettors.filter(b => b.sports.includes(selectedSport));
+  const allBettrs = generateBettrs();
+  const filteredBettrs = selectedSport === "All" 
+    ? allBettrs 
+    : allBettrs.filter(b => b.sports.includes(selectedSport));
 
   // Sort by ROI descending
-  const sortedBettors = [...filteredBettors].sort((a, b) => b.roi - a.roi);
+  const sortedBettrs = [...filteredBettrs].sort((a, b) => b.roi - a.roi);
 
   return (
     <div className="min-h-screen bg-background">
@@ -118,8 +118,8 @@ const Leaderboard = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Top Bettors Leaderboard</h1>
-          <p className="text-muted-foreground">Discover and follow {allBettors.length} verified sports bettors</p>
+          <h1 className="text-4xl font-bold mb-2 text-gradient">Top Bettrs Leaderboard</h1>
+          <p className="text-muted-foreground">Discover and follow {allBettrs.length} verified sports bettrs</p>
         </div>
 
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
@@ -137,18 +137,18 @@ const Leaderboard = () => {
         </div>
 
         <div className="space-y-3">
-          {sortedBettors.map((bettor, index) => {
-            const chartData = bettor.recentPerformance.map((value, i) => ({ index: i, value }));
+          {sortedBettrs.map((bettr, index) => {
+            const chartData = bettr.recentPerformance.map((value, i) => ({ index: i, value }));
             const displayRank = index + 1;
             
             // Rotate through different avatar styles for variety
             const avatarStyles = ['bottts', 'identicon', 'shapes', 'avataaars-neutral', 'pixel-art'];
-            const style = avatarStyles[bettor.id % avatarStyles.length];
-            const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettor.username}`;
+            const style = avatarStyles[bettr.id % avatarStyles.length];
+            const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettr.username}`;
             
             return (
               <Card 
-                key={bettor.id} 
+                key={bettr.id}
                 className="gradient-card border-border hover:border-primary/30 transition-all duration-300 hover:glow-premium overflow-hidden"
               >
                 <CardContent className="p-5">
@@ -162,38 +162,38 @@ const Leaderboard = () => {
                       <Avatar className="w-12 h-12 ring-2 ring-border shrink-0">
                         <AvatarImage 
                           src={avatarUrl}
-                          alt={bettor.username}
+                          alt={bettr.username}
                         />
                         <AvatarFallback className="text-sm font-bold">
-                          {bettor.username.substring(0, 2).toUpperCase()}
+                          {bettr.username.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-1.5 mb-1">
                           <h3 className="text-base font-bold truncate">
-                            @{bettor.username}
+                            @{bettr.username}
                           </h3>
-                          {bettor.verified && (
+                          {bettr.verified && (
                             <Badge variant="outline" className="border-primary/50 text-primary text-[10px] px-1 shrink-0">
                               ✓
                             </Badge>
                           )}
                         </div>
                         <div className="flex flex-wrap gap-1 mb-1">
-                          {bettor.sports.slice(0, 3).map((sport: string) => (
+                          {bettr.sports.slice(0, 3).map((sport: string) => (
                             <Badge key={sport} variant="secondary" className="text-[10px] px-1.5 py-0">
                               {sport}
                             </Badge>
                           ))}
-                          {bettor.sports.length > 3 && (
+                          {bettr.sports.length > 3 && (
                             <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                              +{bettor.sports.length - 3}
+                              +{bettr.sports.length - 3}
                             </Badge>
                           )}
                         </div>
-                        <Badge variant={bettor.badge.variant} className="text-[10px] px-1.5 py-0">
-                          {bettor.badge.label}
+                        <Badge variant={bettr.badge.variant} className="text-[10px] px-1.5 py-0">
+                          {bettr.badge.label}
                         </Badge>
                       </div>
                     </div>
@@ -225,33 +225,33 @@ const Leaderboard = () => {
                       <div className="text-center p-2.5 rounded-lg bg-success/10 border border-success/20">
                         <div className="flex items-center justify-center gap-0.5 text-success font-bold text-lg mb-0.5">
                           <ArrowUp className="w-3.5 h-3.5" />
-                          {bettor.roi}%
+                          {bettr.roi}%
                         </div>
                         <div className="text-[10px] text-muted-foreground">ROI</div>
                       </div>
 
                       <div className="text-center p-2.5 rounded-lg glass-card">
-                        <div className="font-bold text-lg mb-0.5">{bettor.winRate}%</div>
+                        <div className="font-bold text-lg mb-0.5">{bettr.winRate}%</div>
                         <div className="text-[10px] text-muted-foreground">Win Rate</div>
                       </div>
 
                       <div className="text-center p-2.5 rounded-lg glass-card">
                         <div className="flex items-center justify-center gap-0.5 font-bold text-lg mb-0.5">
                           <Users className="w-3.5 h-3.5" />
-                          {bettor.followers > 1000 ? `${(bettor.followers / 1000).toFixed(1)}K` : bettor.followers}
+                          {bettr.followers > 1000 ? `${(bettr.followers / 1000).toFixed(1)}K` : bettr.followers}
                         </div>
                         <div className="text-[10px] text-muted-foreground">Followers</div>
                       </div>
 
                       <div className="text-center p-2.5 rounded-lg glass-card">
-                        <div className="font-bold text-lg mb-0.5">{bettor.totalBets}</div>
+                        <div className="font-bold text-lg mb-0.5">{bettr.totalBets}</div>
                         <div className="text-[10px] text-muted-foreground">Bets</div>
                       </div>
                     </div>
 
                     {/* Action Button */}
                     <div className="w-full md:w-32 shrink-0">
-                      <Link to={`/bettor/${bettor.username}`}>
+                      <Link to={`/bettr/${bettr.username}`}>
                         <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-9 text-sm">
                           <Target className="w-3.5 h-3.5 mr-1.5" />
                           View
@@ -265,9 +265,9 @@ const Leaderboard = () => {
           })}
         </div>
 
-        {filteredBettors.length === 0 && (
+        {filteredBettrs.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">No bettors found for this sport.</p>
+            <p className="text-muted-foreground">No bettrs found for this sport.</p>
           </div>
         )}
       </div>
