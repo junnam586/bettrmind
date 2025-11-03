@@ -123,6 +123,11 @@ const Leaderboard = () => {
             const chartData = bettor.recentPerformance.map((value, i) => ({ index: i, value }));
             const displayRank = index + 1;
             
+            // Rotate through different avatar styles for variety
+            const avatarStyles = ['bottts', 'identicon', 'shapes', 'avataaars-neutral', 'pixel-art'];
+            const style = avatarStyles[bettor.id % avatarStyles.length];
+            const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettor.username}`;
+            
             return (
               <Card 
                 key={bettor.id} 
@@ -138,7 +143,7 @@ const Leaderboard = () => {
                       
                       <Avatar className="w-12 h-12 ring-2 ring-border shrink-0">
                         <AvatarImage 
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${bettor.username}&backgroundColor=b6e3f4,c0aede,d1d4f9`}
+                          src={avatarUrl}
                           alt={bettor.username}
                         />
                         <AvatarFallback className="text-sm font-bold">

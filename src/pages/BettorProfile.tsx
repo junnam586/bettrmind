@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis, XAxis } from "recharts";
 import { toast } from "@/hooks/use-toast";
@@ -113,6 +114,12 @@ const BettorProfile = () => {
   const activeBets = generateActiveBets(bettor.sport);
   const chartData = bettor.recentPerformance.map((value, index) => ({ index, value }));
 
+  // Generate avatar based on username
+  const avatarStyles = ['bottts', 'identicon', 'shapes', 'avataaars-neutral', 'pixel-art'];
+  const avatarId = bettor.username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const style = avatarStyles[avatarId % avatarStyles.length];
+  const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettor.username}`;
+
   const toggleBetSelection = (betId: string) => {
     setSelectedBets(prev => 
       prev.includes(betId) ? prev.filter(id => id !== betId) : [...prev, betId]
@@ -151,10 +158,23 @@ const BettorProfile = () => {
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-6">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <h1 className="text-3xl font-bold">@{bettor.username}</h1>
-                  <Badge variant="outline" className="border-primary text-primary">Verified</Badge>
-                  <Badge variant="secondary">{bettor.sport}</Badge>
+                <div className="flex items-center gap-4 mb-4">
+                  <Avatar className="w-20 h-20 ring-2 ring-border">
+                    <AvatarImage 
+                      src={avatarUrl}
+                      alt={bettor.username}
+                    />
+                    <AvatarFallback className="text-lg font-bold">
+                      {bettor.username.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-3xl font-bold">@{bettor.username}</h1>
+                      <Badge variant="outline" className="border-primary text-primary">Verified</Badge>
+                      <Badge variant="secondary">{bettor.sport}</Badge>
+                    </div>
+                  </div>
                 </div>
                 <p className="text-muted-foreground mb-4">{bettor.bio}</p>
                 

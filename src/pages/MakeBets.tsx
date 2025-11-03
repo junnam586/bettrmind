@@ -4,6 +4,7 @@ import { TrendingUp, Users, Target, ArrowUp, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
@@ -149,6 +150,11 @@ const MakeBets = () => {
               value,
             }));
 
+            // Rotate through different avatar styles for variety
+            const avatarStyles = ['bottts', 'identicon', 'shapes', 'avataaars-neutral', 'pixel-art'];
+            const style = avatarStyles[bettor.id % avatarStyles.length];
+            const avatarUrl = `https://api.dicebear.com/7.x/${style}/svg?seed=${bettor.username}`;
+
             return (
               <Card 
                 key={bettor.id}
@@ -158,15 +164,26 @@ const MakeBets = () => {
                   <div className="flex flex-col gap-4 flex-1">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                          <h3 className="text-lg font-bold truncate">@{bettor.username}</h3>
-                          <Badge variant="outline" className="border-primary/50 text-primary shine-border text-xs">
-                            ✓
-                          </Badge>
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <Avatar className="w-14 h-14 ring-2 ring-border shrink-0">
+                          <AvatarImage 
+                            src={avatarUrl}
+                            alt={bettor.username}
+                          />
+                          <AvatarFallback className="text-sm font-bold">
+                            {bettor.username.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                            <h3 className="text-lg font-bold truncate">@{bettor.username}</h3>
+                            <Badge variant="outline" className="border-primary/50 text-primary shine-border text-xs">
+                              ✓
+                            </Badge>
+                          </div>
+                          <Badge variant="secondary" className="text-xs mb-2">{bettor.sport}</Badge>
+                          <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{bettor.bio}</p>
                         </div>
-                        <Badge variant="secondary" className="text-xs mb-2">{bettor.sport}</Badge>
-                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{bettor.bio}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
                         <div className="text-2xl font-bold text-success mb-0.5">{bettor.roi}</div>
