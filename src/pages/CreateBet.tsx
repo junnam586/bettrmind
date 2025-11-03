@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
-import { Plus, X, TrendingUp, DollarSign, Percent, Eye, EyeOff, Circle, Dribbble } from "lucide-react";
+import { Plus, X, TrendingUp, DollarSign, Percent, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const CreateBet = () => {
@@ -23,12 +23,12 @@ const CreateBet = () => {
   const [isPublic, setIsPublic] = useState(true);
 
   const sports = [
-    { id: "nfl", name: "NFL", icon: Circle },
-    { id: "nba", name: "NBA", icon: Dribbble },
-    { id: "mlb", name: "MLB", icon: Circle },
-    { id: "nhl", name: "NHL", icon: Circle },
-    { id: "ufc", name: "UFC", icon: Circle },
-    { id: "soccer", name: "Soccer", icon: Circle },
+    { id: "nfl", name: "NFL", emoji: "🏈" },
+    { id: "nba", name: "NBA", emoji: "🏀" },
+    { id: "mlb", name: "MLB", emoji: "⚾" },
+    { id: "nhl", name: "NHL", emoji: "🏒" },
+    { id: "ufc", name: "UFC", emoji: "🥊" },
+    { id: "soccer", name: "Soccer", emoji: "⚽" },
   ];
 
   const games = {
@@ -92,7 +92,6 @@ const CreateBet = () => {
               <Label>Select Sport</Label>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
                 {sports.map(sport => {
-                  const Icon = sport.icon;
                   return (
                     <div
                       key={sport.id}
@@ -103,7 +102,7 @@ const CreateBet = () => {
                           : "border-border hover:border-primary/50"
                       }`}
                     >
-                      <Icon className="w-5 h-5 text-primary" />
+                      <span className="text-2xl">{sport.emoji}</span>
                       <span className="font-medium">{sport.name}</span>
                     </div>
                   );

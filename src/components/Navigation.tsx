@@ -18,10 +18,10 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-primary" />
+            <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center">
+              <TrendingUp className="w-5 h-5 text-foreground" />
             </div>
-            <span className="text-xl font-bold text-gradient">BettrMind</span>
+            <span className="text-xl font-bold text-foreground">BettrMind</span>
           </Link>
           
           <div className="hidden md:flex items-center gap-3">
@@ -34,8 +34,8 @@ const Navigation = () => {
                   to={item.path}
                   className={`flex items-center gap-1.5 px-2.5 py-2 rounded-lg transition-all ${
                     isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                      ? "bg-muted text-foreground"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -47,13 +47,13 @@ const Navigation = () => {
 
           <div className="flex items-center gap-3">
             <Link to="/get-copied">
-              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+              <Button size="sm" className="bg-muted hover:bg-muted/80 text-foreground font-semibold">
                 <Target className="w-4 h-4 mr-2" />
                 Get Copied
               </Button>
             </Link>
             <Link to="/make-bets">
-              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+              <Button size="sm" className="bg-muted hover:bg-muted/80 text-foreground font-semibold">
                 <Target className="w-4 h-4 mr-2" />
                 Make Bets
               </Button>
