@@ -11,7 +11,6 @@ const Navigation = () => {
     { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/active-bets", label: "Active Bets", icon: TrendingUp },
     { path: "/wallet", label: "Wallet", icon: Wallet },
-    { path: "/get-copied", label: "Get Copied", icon: Target },
   ];
 
   return (
@@ -47,6 +46,12 @@ const Navigation = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <Link to="/get-copied">
+              <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+                <Target className="w-4 h-4 mr-2" />
+                Get Copied
+              </Button>
+            </Link>
             <Link to="/make-bets">
               <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
                 <Target className="w-4 h-4 mr-2" />
