@@ -178,16 +178,16 @@ const CreateBet = () => {
               </div>
               <Input
                 id="tip"
-                type="range"
-                min="5"
-                max="20"
+                type="number"
+                min="1"
+                max="99"
                 step="1"
                 value={tipPercentage}
-                onChange={(e) => setTipPercentage(parseInt(e.target.value))}
+                onChange={(e) => setTipPercentage(Math.min(99, Math.max(1, parseInt(e.target.value) || 1)))}
                 className="cursor-pointer"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Copiers must pay this percentage to copy your bet (5% - 20%)
+                Copiers must pay this percentage to copy your bet (1% - 99%)
               </p>
             </div>
 

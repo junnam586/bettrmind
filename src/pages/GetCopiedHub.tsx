@@ -17,7 +17,7 @@ const GetCopiedHub = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
           <Link to="/create-bet">
             <Card className="gradient-card border-border hover:border-primary/50 transition-all cursor-pointer h-full group hover:glow-premium">
               <CardContent className="p-8 text-center">
@@ -26,27 +26,10 @@ const GetCopiedHub = () => {
                 </div>
                 <h3 className="text-2xl font-bold mb-3">Create Bet</h3>
                 <p className="text-muted-foreground mb-4">
-                  Build custom bets with your picks and set your commission rate
+                  Build custom bets and set your commission rate. Share publicly or keep it private.
                 </p>
                 <Button className="w-full bg-primary hover:bg-primary/90">
                   Start Creating
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/browse-bets">
-            <Card className="gradient-card border-border hover:border-primary/50 transition-all cursor-pointer h-full group hover:glow-premium">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-                  <Search className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-2xl font-bold mb-3">Browse & Copy</h3>
-                <p className="text-muted-foreground mb-4">
-                  Discover winning bets from top creators and copy them instantly
-                </p>
-                <Button className="w-full bg-primary hover:bg-primary/90">
-                  Browse Bets
                 </Button>
               </CardContent>
             </Card>

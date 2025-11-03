@@ -278,10 +278,17 @@ const BrowseBets = () => {
                           <Users className="w-3 h-3 text-muted-foreground" />
                           <span className="text-muted-foreground">{bet.copiers} copiers</span>
                         </div>
-                        <div className="flex items-center gap-1 px-2 py-1 rounded bg-primary/10">
-                          <TrendingUp className="w-3 h-3 text-primary" />
-                          <span className="font-semibold text-primary">{bet.tipPercentage}% tip required</span>
+                      </div>
+                      
+                      {/* Mandatory Tip - Prominent Display */}
+                      <div className="mt-3 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30">
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="w-4 h-4 text-amber-500" />
+                          <span className="font-bold text-amber-500">Mandatory Tip: {bet.tipPercentage}%</span>
                         </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          You must pay {bet.tipPercentage}% of your wager to copy this bet
+                        </p>
                       </div>
                     </div>
 
