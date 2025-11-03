@@ -297,10 +297,13 @@ const BettrProfile = () => {
                       : 'border-border glass-card hover:border-primary/50'
                   }`}
                 >
-                  <Checkbox
-                    checked={selectedBets.includes(bet.id)}
-                    onCheckedChange={() => toggleBetSelection(bet.id)}
-                  />
+                  <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedBets.includes(bet.id)}
+                      onCheckedChange={() => toggleBetSelection(bet.id)}
+                      className="cursor-pointer"
+                    />
+                  </div>
                   
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-6 gap-3">
                     <div className="md:col-span-2">

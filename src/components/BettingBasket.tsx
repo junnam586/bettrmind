@@ -3,6 +3,7 @@ import { ShoppingBasket, X, Sparkles, TrendingUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import { useBasket } from '@/contexts/BasketContext';
 import { useToast } from '@/hooks/use-toast';
 
@@ -12,14 +13,16 @@ const BettingBasket = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [aiScore, setAiScore] = useState<number | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [wager, setWager] = useState<string>('100');
 
   const calculateParlayOdds = () => {
     if (basket.length === 0) return 1;
     return basket.reduce((total, bet) => total * bet.odds, 1);
   };
 
-  const calculatePayout = (wager: number) => {
-    return (wager * calculateParlayOdds()).toFixed(2);
+  const calculatePayout = () => {
+    const wagerAmount = parseFloat(wager) || 0;
+    return (wagerAmount * calculateParlayOdds()).toFixed(2);
   };
 
   const getAIScore = async () => {
@@ -64,6 +67,7 @@ const BettingBasket = () => {
     }
     clearBasket();
     setAiScore(null);
+    setWager('100');
   };
 
   if (basket.length === 0 && !isExpanded) {
@@ -82,8 +86,8 @@ const BettingBasket = () => {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 max-h-[50vh]">
-      <Card className="w-72 shadow-2xl border-primary/20 flex flex-col max-h-full">
+    <div className="fixed bottom-6 right-6 z-50 w-72">
+      <Card className="shadow-2xl border-primary/20 flex flex-col" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
         <CardHeader className="pb-2 py-3 shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-base">
@@ -140,6 +144,23 @@ const BettingBasket = () => {
 
           {basket.length > 0 && (
             <>
+              {/* Wager Input */}
+              <div className="p-3 rounded-lg bg-muted/30 border border-border space-y-2">
+                <label className="text-sm font-medium">Wager Amount</label>
+                <div className="flex items-center gap-2">
+                  <span className="text-muted-foreground">$</span>
+                  <Input
+                    type="number"
+                    value={wager}
+                    onChange={(e) => setWager(e.target.value)}
+                    className="flex-1"
+                    placeholder="100"
+                    min="0"
+                    step="10"
+                  />
+                </div>
+              </div>
+
               {/* Bet Summary */}
               <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-2">
                 <div className="flex items-center justify-between">
@@ -149,9 +170,9 @@ const BettingBasket = () => {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">$100 returns</span>
+                  <span className="text-muted-foreground">Potential Payout</span>
                   <span className="font-bold text-success">
-                    ${calculatePayout(100)}
+                    ${calculatePayout()}
                   </span>
                 </div>
               </div>
