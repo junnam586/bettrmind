@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, TrendingUp, Users, Target, Trophy, Calendar, DollarSign } from "lucide-react";
+import { ArrowLeft, TrendingUp, Users, Target, Trophy, Calendar, DollarSign, ShoppingBasket } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis, XAxis } from "recharts";
 import { toast } from "@/hooks/use-toast";
+import { useBasket } from "@/contexts/BasketContext";
 
 // Sample active bets for demonstration
 const generateActiveBets = (sport: string) => {
@@ -91,6 +92,7 @@ const generateActiveBets = (sport: string) => {
 
 const BettorProfile = () => {
   const { username } = useParams();
+  const { addToBasket, isInBasket } = useBasket();
   const [selectedBets, setSelectedBets] = useState<string[]>([]);
   
   // Mock bettor data - in real app would fetch from API
@@ -126,21 +128,54 @@ const BettorProfile = () => {
     );
   };
 
-  const handleCopyBets = () => {
+  const handleAddToBasket = () => {
     if (selectedBets.length === 0) {
       toast({
         title: "No bets selected",
-        description: "Please select at least one bet to copy",
+        description: "Please select at least one bet to add to basket",
         variant: "destructive"
       });
       return;
     }
     
-    // Would navigate to bet placement page with selected bets
-    toast({
-      title: "Bets copied!",
-      description: `${selectedBets.length} bet(s) added to your slip`,
+    let addedCount = 0;
+    selectedBets.forEach(betId => {
+      const bet = activeBets.find(b => b.id === betId);
+      if (bet && !isInBasket(betId)) {
+        // Convert odds to decimal format
+        const oddsValue = bet.odds.startsWith('+') 
+          ? 1 + (parseInt(bet.odds.substring(1)) / 100)
+          : bet.odds.startsWith('-')
+          ? 1 + (100 / Math.abs(parseInt(bet.odds)))
+          : parseFloat(bet.odds);
+
+        addToBasket({
+          id: betId,
+          sport: bettor.sport,
+          game: bet.matchup,
+          betType: bet.betType,
+          selection: bet.pick,
+          odds: oddsValue,
+          tipPercentage: 10, // Default tip percentage
+          bettorUsername: bettor.username
+        });
+        addedCount++;
+      }
     });
+    
+    if (addedCount > 0) {
+      toast({
+        title: "Added to Basket!",
+        description: `${addedCount} bet(s) added to your parlay basket`,
+      });
+      setSelectedBets([]);
+    } else {
+      toast({
+        title: "Already in basket",
+        description: "Selected bets are already in your basket",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -244,8 +279,9 @@ const BettorProfile = () => {
                 @{bettor.username}'s Active Bets ({activeBets.length})
               </CardTitle>
               {selectedBets.length > 0 && (
-                <Button onClick={handleCopyBets} className="bg-primary hover:bg-primary/90">
-                  Copy {selectedBets.length} Bet{selectedBets.length > 1 ? 's' : ''}
+                <Button onClick={handleAddToBasket} className="bg-primary hover:bg-primary/90">
+                  <ShoppingBasket className="w-4 h-4 mr-2" />
+                  Add {selectedBets.length} to Basket
                 </Button>
               )}
             </div>

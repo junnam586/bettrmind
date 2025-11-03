@@ -8,19 +8,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/Navigation";
-import { Plus, X, TrendingUp, DollarSign, Percent, Eye, EyeOff } from "lucide-react";
+import { Plus, X, TrendingUp, DollarSign, Percent, Eye, EyeOff, Sparkles, ShoppingBasket } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useBasket, BetInBasket } from "@/contexts/BasketContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const CreateBet = () => {
   const { toast } = useToast();
+  const { addToBasket } = useBasket();
   const [selectedSport, setSelectedSport] = useState("nfl");
   const [selectedGame, setSelectedGame] = useState("");
   const [betType, setBetType] = useState("");
+  const [selection, setSelection] = useState("");
   const [odds, setOdds] = useState("1.90");
   const [wager, setWager] = useState(0);
-  const [parlayLegs, setParlayLegs] = useState<any[]>([]);
+  const [parlayLegs, setParlayLegs] = useState<BetInBasket[]>([]);
   const [tipPercentage, setTipPercentage] = useState(10);
   const [isPublic, setIsPublic] = useState(true);
+  const [aiScore, setAiScore] = useState<number | null>(null);
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   const sports = [
     { id: "nfl", name: "NFL", emoji: "🏈" },
@@ -48,13 +54,105 @@ const CreateBet = () => {
     "Parlay",
   ];
 
+  const calculateParlayOdds = () => {
+    if (parlayLegs.length === 0) return parseFloat(odds);
+    return parlayLegs.reduce((acc, leg) => acc * leg.odds, parseFloat(odds));
+  };
+
   const calculatePayout = () => {
-    const totalOdds = parlayLegs.reduce((acc, leg) => acc * parseFloat(leg.odds), parseFloat(odds));
-    return (wager * totalOdds).toFixed(2);
+    return (wager * calculateParlayOdds()).toFixed(2);
+  };
+
+  const addLegToParlay = () => {
+    if (!selectedGame || !betType || !selection) {
+      toast({
+        title: "Missing Information",
+        description: "Please complete all bet details before adding to parlay",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const newLeg: BetInBasket = {
+      id: `leg-${Date.now()}`,
+      sport: selectedSport,
+      game: selectedGame,
+      betType,
+      selection,
+      odds: parseFloat(odds),
+    };
+
+    setParlayLegs([...parlayLegs, newLeg]);
+    
+    // Reset for next leg
+    setSelectedGame("");
+    setBetType("");
+    setSelection("");
+    setOdds("1.90");
+
+    toast({
+      title: "Leg Added",
+      description: `Added to parlay (${parlayLegs.length + 1} legs total)`,
+    });
+  };
+
+  const removeLeg = (id: string) => {
+    setParlayLegs(parlayLegs.filter(leg => leg.id !== id));
+  };
+
+  const getAIScore = async () => {
+    if (!selectedGame || !betType || !selection) {
+      toast({
+        title: "Missing Information",
+        description: "Please complete all bet details to get AI score",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoadingAI(true);
+    try {
+      const betsToAnalyze = parlayLegs.length > 0 
+        ? [...parlayLegs, { 
+            sport: selectedSport, 
+            game: selectedGame, 
+            betType, 
+            selection, 
+            odds: parseFloat(odds) 
+          }]
+        : [{ 
+            sport: selectedSport, 
+            game: selectedGame, 
+            betType, 
+            selection, 
+            odds: parseFloat(odds) 
+          }];
+
+      const { data, error } = await supabase.functions.invoke('score-bet', {
+        body: { bets: betsToAnalyze }
+      });
+
+      if (error) throw error;
+      
+      setAiScore(data.score);
+      toast({
+        title: 'AI Analysis Complete',
+        description: `Score: ${data.score}/100 - ${data.reasoning}`,
+      });
+    } catch (error) {
+      console.error('Error getting AI score:', error);
+      toast({
+        title: 'AI Analysis Failed',
+        description: 'Could not analyze bet at this time',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingAI(false);
+    }
   };
 
   const handlePublishBet = () => {
-    if (!selectedGame || !betType || !wager || wager < 5) {
+    if (!selectedGame || !betType || !selection || !wager || wager < 5) {
       toast({
         title: "Invalid Bet",
         description: "Please complete all fields and ensure minimum wager is $5",
@@ -63,10 +161,20 @@ const CreateBet = () => {
       return;
     }
 
+    const betTypeLabel = parlayLegs.length > 0 ? `${parlayLegs.length + 1}-leg parlay` : 'bet';
+    
     toast({
       title: "Bet Published!",
-      description: `Your ${selectedSport.toUpperCase()} bet is now ${isPublic ? "public" : "private"} with ${tipPercentage}% tip requirement`,
+      description: `Your ${selectedSport.toUpperCase()} ${betTypeLabel} is now ${isPublic ? "public" : "private"} with ${tipPercentage}% tip requirement`,
     });
+    
+    // Reset form
+    setParlayLegs([]);
+    setSelectedGame("");
+    setBetType("");
+    setSelection("");
+    setWager(0);
+    setAiScore(null);
   };
 
   return (
@@ -133,11 +241,25 @@ const CreateBet = () => {
                   <SelectValue placeholder="Choose bet type" />
                 </SelectTrigger>
                 <SelectContent>
-                  {betTypes.map(type => (
+                  {betTypes.filter(t => t !== "Parlay").map(type => (
                     <SelectItem key={type} value={type}>{type}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Selection/Pick */}
+            <div>
+              <Label htmlFor="selection">Your Selection</Label>
+              <Input
+                id="selection"
+                placeholder="e.g., Chiefs -3.5, Over 48.5, Lakers ML"
+                value={selection}
+                onChange={(e) => setSelection(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                What are you betting on?
+              </p>
             </div>
 
             {/* Odds (Display Only) */}
@@ -206,10 +328,72 @@ const CreateBet = () => {
               />
             </div>
 
+            {/* Parlay Legs */}
+            {parlayLegs.length > 0 && (
+              <div>
+                <Label>Parlay Legs ({parlayLegs.length})</Label>
+                <div className="mt-2 space-y-2">
+                  {parlayLegs.map((leg) => (
+                    <div key={leg.id} className="p-3 rounded-lg bg-muted/50 border border-border flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge variant="secondary" className="text-xs">{leg.sport}</Badge>
+                          <span className="text-xs font-bold text-primary">{leg.odds}x</span>
+                        </div>
+                        <p className="text-sm font-medium">{leg.game}</p>
+                        <p className="text-xs text-muted-foreground">{leg.betType} - {leg.selection}</p>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => removeLeg(leg.id)}>
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Add to Parlay Button */}
+            {selectedGame && betType && selection && (
+              <Button onClick={addLegToParlay} variant="outline" className="w-full">
+                <Plus className="w-4 h-4 mr-2" />
+                Add Leg to Parlay
+              </Button>
+            )}
+
+            {/* AI Score Section */}
+            {aiScore !== null && (
+              <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-accent" />
+                    <span className="font-medium">AI Confidence Score</span>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className={`text-xl font-bold ${
+                      aiScore >= 70
+                        ? 'border-success text-success'
+                        : aiScore >= 50
+                        ? 'border-primary text-primary'
+                        : 'border-destructive text-destructive'
+                    }`}
+                  >
+                    {aiScore}/100
+                  </Badge>
+                </div>
+              </div>
+            )}
+
+            {/* Get AI Score Button */}
+            <Button onClick={getAIScore} disabled={isLoadingAI} variant="outline" className="w-full">
+              <Sparkles className="w-4 h-4 mr-2" />
+              {isLoadingAI ? 'Analyzing...' : 'Get AI Confidence Score'}
+            </Button>
+
             {/* Publish Button */}
             <Button onClick={handlePublishBet} className="w-full" size="lg">
               <TrendingUp className="w-4 h-4 mr-2" />
-              Publish Bet
+              Publish {parlayLegs.length > 0 ? `${parlayLegs.length + 1}-Leg Parlay` : 'Bet'}
             </Button>
           </CardContent>
         </Card>
@@ -237,15 +421,27 @@ const CreateBet = () => {
                 <span className="text-muted-foreground">Type</span>
                 <span className="font-medium">{betType || "Not selected"}</span>
               </div>
+              {selection && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Selection</span>
+                  <span className="font-medium">{selection}</span>
+                </div>
+              )}
               {parlayLegs.length > 0 && (
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Parlay Legs</span>
-                  <span className="font-medium">{parlayLegs.length + 1}</span>
+                  <Badge variant="secondary">{parlayLegs.length + 1} legs</Badge>
                 </div>
               )}
             </div>
 
             <div className="border-t border-border pt-4 space-y-3">
+              {parlayLegs.length > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-sm text-muted-foreground">Parlay Odds</span>
+                  <span className="font-bold text-primary">{calculateParlayOdds().toFixed(2)}x</span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Wager</span>
                 <span className="font-bold">${wager || "0.00"}</span>
