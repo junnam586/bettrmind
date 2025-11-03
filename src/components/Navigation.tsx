@@ -14,7 +14,7 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border shadow-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center gap-3">
@@ -44,13 +44,13 @@ const Navigation = () => {
 
           <div className="flex items-center gap-3">
             <Link to="/get-copied">
-              <Button size="sm" variant="outline" className="font-medium">
+              <Button size="sm" className="bg-muted hover:bg-muted/80 text-foreground font-semibold">
                 <Target className="w-4 h-4 mr-2" />
                 Get Copied
               </Button>
             </Link>
             <Link to="/make-bets">
-              <Button size="sm" className="font-medium">
+              <Button size="sm" className="bg-muted hover:bg-muted/80 text-foreground font-semibold">
                 <Target className="w-4 h-4 mr-2" />
                 Make Bets
               </Button>
