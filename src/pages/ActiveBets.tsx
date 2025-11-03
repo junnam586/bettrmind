@@ -308,7 +308,7 @@ const ActiveBets = () => {
                         {bet.tipAmount > 0 && (
                           <>
                             <span>•</span>
-                            <span className="text-primary">Tip: ${bet.tipAmount} ({bet.tipPercentage}%)</span>
+                            <span>Tip: ${bet.tipAmount} ({bet.tipPercentage}%)</span>
                           </>
                         )}
                         <span>•</span>

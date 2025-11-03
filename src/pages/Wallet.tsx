@@ -318,7 +318,7 @@ const Wallet = () => {
           <div className="space-y-4 py-4">
             <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
               <div className="text-sm text-muted-foreground">Available to withdraw</div>
-              <div className="text-2xl font-bold text-primary">${(balance - 325).toFixed(2)}</div>
+              <div className="text-2xl font-bold">${(balance - 325).toFixed(2)}</div>
               <div className="text-xs text-muted-foreground mt-1">($325 in pending bets)</div>
             </div>
             <div>
