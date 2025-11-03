@@ -70,7 +70,7 @@ const BettingBasket = () => {
     setWager('100');
   };
 
-  if (basket.length === 0 && !isExpanded) {
+  if (!isExpanded) {
     return (
       <div className="fixed bottom-6 right-6 z-50">
         <Button
@@ -79,7 +79,7 @@ const BettingBasket = () => {
           onClick={() => setIsExpanded(true)}
         >
           <ShoppingBasket className="w-5 h-5 mr-2" />
-          Basket (0)
+          Basket ({basket.length})
         </Button>
       </div>
     );
