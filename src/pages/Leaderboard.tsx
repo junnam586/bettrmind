@@ -98,7 +98,7 @@ const Leaderboard = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2 text-gradient">Top Bettors Leaderboard</h1>
           <p className="text-muted-foreground">Discover and follow {allBettors.length} verified sports bettors</p>
@@ -118,55 +118,54 @@ const Leaderboard = () => {
           ))}
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           {sortedBettors.map((bettor, index) => {
             const chartData = bettor.recentPerformance.map((value, i) => ({ index: i, value }));
             const displayRank = index + 1;
-            const avatarNum = (bettor.id % 24) + 1;
             
             return (
               <Card 
                 key={bettor.id} 
-                className="gradient-card border-border hover:border-primary/30 transition-all duration-300 hover:glow-premium"
+                className="gradient-card border-border hover:border-primary/30 transition-all duration-300 hover:glow-premium overflow-hidden"
               >
-                <CardContent className="p-8">
-                  <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-                    {/* Rank, Avatar and Name Section - Fixed Width */}
-                    <div className="flex items-center gap-5 lg:w-80">
-                      <div className="text-4xl font-bold text-muted-foreground min-w-[60px] text-center">
+                <CardContent className="p-5">
+                  <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                    {/* Rank and Avatar */}
+                    <div className="flex items-center gap-3 min-w-[200px]">
+                      <div className="text-2xl font-bold text-muted-foreground w-10 text-center shrink-0">
                         #{displayRank}
                       </div>
                       
-                      <Avatar className="w-20 h-20 ring-2 ring-border">
+                      <Avatar className="w-12 h-12 ring-2 ring-border shrink-0">
                         <AvatarImage 
                           src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${bettor.username}&backgroundColor=b6e3f4,c0aede,d1d4f9`}
                           alt={bettor.username}
                         />
-                        <AvatarFallback className="text-lg font-bold">
+                        <AvatarFallback className="text-sm font-bold">
                           {bettor.username.substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-2">
-                          <h3 className="text-xl font-bold text-foreground">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <h3 className="text-base font-bold truncate">
                             @{bettor.username}
                           </h3>
                           {bettor.verified && (
-                            <Badge variant="outline" className="border-primary/50 text-primary text-xs shrink-0">
+                            <Badge variant="outline" className="border-primary/50 text-primary text-[10px] px-1 shrink-0">
                               ✓
                             </Badge>
                           )}
                         </div>
-                        <Badge variant="secondary" className="text-sm">{bettor.sport}</Badge>
+                        <Badge variant="secondary" className="text-xs">{bettor.sport}</Badge>
                       </div>
                     </div>
 
-                    {/* Performance Chart - Flexible */}
-                    <div className="flex-1 lg:min-w-[280px] lg:max-w-md">
-                      <div className="glass-card rounded-lg p-4 h-full">
-                        <div className="text-sm font-medium text-muted-foreground mb-3">15-Bet Performance Trend</div>
-                        <div className="h-20 w-full">
+                    {/* Performance Chart */}
+                    <div className="flex-1 md:max-w-[200px]">
+                      <div className="glass-card rounded-lg p-2.5">
+                        <div className="text-[10px] text-muted-foreground mb-1.5">Performance</div>
+                        <div className="h-10 w-full">
                           <ResponsiveContainer width="100%" height="100%">
                             <LineChart data={chartData}>
                               <YAxis hide domain={['auto', 'auto']} />
@@ -174,7 +173,7 @@ const Leaderboard = () => {
                                 type="monotone"
                                 dataKey="value"
                                 stroke="hsl(142 76% 36%)"
-                                strokeWidth={2.5}
+                                strokeWidth={2}
                                 dot={false}
                                 isAnimationActive={false}
                               />
@@ -184,41 +183,41 @@ const Leaderboard = () => {
                       </div>
                     </div>
 
-                    {/* Stats Grid - Fixed Width */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:w-[600px]">
-                      <div className="text-center p-4 rounded-lg bg-success/10 border border-success/20 min-h-[90px] flex flex-col justify-center">
-                        <div className="flex items-center justify-center gap-1 text-success font-bold text-2xl mb-1">
-                          <ArrowUp className="w-5 h-5" />
-                          +{bettor.roi}%
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 flex-1">
+                      <div className="text-center p-2.5 rounded-lg bg-success/10 border border-success/20">
+                        <div className="flex items-center justify-center gap-0.5 text-success font-bold text-lg mb-0.5">
+                          <ArrowUp className="w-3.5 h-3.5" />
+                          {bettor.roi}%
                         </div>
-                        <div className="text-sm text-muted-foreground">ROI</div>
+                        <div className="text-[10px] text-muted-foreground">ROI</div>
                       </div>
 
-                      <div className="text-center p-4 rounded-lg glass-card min-h-[90px] flex flex-col justify-center">
-                        <div className="font-bold text-2xl mb-1">{bettor.winRate}%</div>
-                        <div className="text-sm text-muted-foreground">Win Rate</div>
+                      <div className="text-center p-2.5 rounded-lg glass-card">
+                        <div className="font-bold text-lg mb-0.5">{bettor.winRate}%</div>
+                        <div className="text-[10px] text-muted-foreground">Win Rate</div>
                       </div>
 
-                      <div className="text-center p-4 rounded-lg glass-card min-h-[90px] flex flex-col justify-center">
-                        <div className="flex items-center justify-center gap-1 font-bold text-2xl mb-1">
-                          <Users className="w-5 h-5" />
+                      <div className="text-center p-2.5 rounded-lg glass-card">
+                        <div className="flex items-center justify-center gap-0.5 font-bold text-lg mb-0.5">
+                          <Users className="w-3.5 h-3.5" />
                           {bettor.followers > 1000 ? `${(bettor.followers / 1000).toFixed(1)}K` : bettor.followers}
                         </div>
-                        <div className="text-sm text-muted-foreground">Followers</div>
+                        <div className="text-[10px] text-muted-foreground">Followers</div>
                       </div>
 
-                      <div className="text-center p-4 rounded-lg glass-card min-h-[90px] flex flex-col justify-center">
-                        <div className="font-bold text-2xl mb-1">{bettor.totalBets}</div>
-                        <div className="text-sm text-muted-foreground">Total Bets</div>
+                      <div className="text-center p-2.5 rounded-lg glass-card">
+                        <div className="font-bold text-lg mb-0.5">{bettor.totalBets}</div>
+                        <div className="text-[10px] text-muted-foreground">Bets</div>
                       </div>
                     </div>
 
-                    {/* Action Button - Fixed Width */}
-                    <div className="lg:w-44 w-full">
+                    {/* Action Button */}
+                    <div className="w-full md:w-32 shrink-0">
                       <Link to={`/bettor/${bettor.username}`}>
-                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-12 text-base">
-                          <Target className="w-4 h-4 mr-2" />
-                          View Bets
+                        <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-9 text-sm">
+                          <Target className="w-3.5 h-3.5 mr-1.5" />
+                          View
                         </Button>
                       </Link>
                     </div>
