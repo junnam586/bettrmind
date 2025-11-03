@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
-import { TrendingUp, DollarSign, Trophy, AlertCircle, Dribbble, Circle } from "lucide-react";
+import { TrendingUp, DollarSign, Trophy, AlertCircle, Dribbble, Circle, Users, Copy } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ActiveBet {
   id: number;
@@ -20,6 +21,8 @@ interface ActiveBet {
   isCopied: boolean;
   originalBettor?: string;
   originalBettorId?: number;
+  copiers?: Array<{ username: string; id: number; amount: number }>;
+  potentialTipEarnings?: number;
 }
 
 const mockActiveBets: ActiveBet[] = [
@@ -67,10 +70,16 @@ const mockActiveBets: ActiveBet[] = [
     wagerAmount: 100,
     potentialPayout: 350,
     tipAmount: 0,
-    tipPercentage: 0,
-    status: "pending",
+    tipPercentage: 12,
+    status: "active",
     placedAt: "1d ago",
     isCopied: false,
+    copiers: [
+      { username: "bettor_mike", id: 101, amount: 150 },
+      { username: "sports_sam", id: 102, amount: 200 },
+      { username: "kelly_picks", id: 103, amount: 100 },
+    ],
+    potentialTipEarnings: 54,
   },
   {
     id: 4,
@@ -116,10 +125,15 @@ const mockActiveBets: ActiveBet[] = [
     wagerAmount: 120,
     potentialPayout: 312,
     tipAmount: 0,
-    tipPercentage: 0,
+    tipPercentage: 8,
     status: "active",
     placedAt: "5h ago",
     isCopied: false,
+    copiers: [
+      { username: "hockey_hero", id: 104, amount: 180 },
+      { username: "puck_pro", id: 105, amount: 90 },
+    ],
+    potentialTipEarnings: 21.6,
   },
   {
     id: 7,
@@ -147,14 +161,29 @@ const getAvatarUrl = (id: number, username: string) => {
 };
 
 const ActiveBets = () => {
-  const totalActiveBets = mockActiveBets.filter(b => b.status === "active" || b.status === "pending").length;
-  const totalPotentialEarnings = mockActiveBets
-    .filter(b => b.status === "active" || b.status === "pending")
-    .reduce((sum, b) => sum + b.potentialPayout, 0);
-  const totalTipsPaid = mockActiveBets.reduce((sum, b) => sum + b.tipAmount, 0);
-  const totalWagered = mockActiveBets
+  // Separate bets into copied and owned
+  const copiedBets = mockActiveBets.filter(b => b.isCopied);
+  const ownedBets = mockActiveBets.filter(b => !b.isCopied);
+
+  // Stats for copied bets
+  const totalCopiedActive = copiedBets.filter(b => b.status === "active" || b.status === "pending").length;
+  const totalCopiedWagered = copiedBets
     .filter(b => b.status === "active" || b.status === "pending")
     .reduce((sum, b) => sum + b.wagerAmount, 0);
+  const totalCopiedPotential = copiedBets
+    .filter(b => b.status === "active" || b.status === "pending")
+    .reduce((sum, b) => sum + b.potentialPayout, 0);
+  const totalTipsPaid = copiedBets.reduce((sum, b) => sum + b.tipAmount, 0);
+
+  // Stats for owned bets
+  const totalOwnedActive = ownedBets.filter(b => b.status === "active" || b.status === "pending").length;
+  const totalCopiers = ownedBets.reduce((sum, b) => sum + (b.copiers?.length || 0), 0);
+  const totalOwnedWagered = ownedBets
+    .filter(b => b.status === "active" || b.status === "pending")
+    .reduce((sum, b) => sum + b.wagerAmount, 0);
+  const totalPotentialTipEarnings = ownedBets
+    .filter(b => b.status === "active" || b.status === "pending")
+    .reduce((sum, b) => sum + (b.potentialTipEarnings || 0), 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -166,60 +195,80 @@ const ActiveBets = () => {
           <p className="text-muted-foreground">Track all your ongoing bets and earnings</p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <Trophy className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-3xl font-bold mb-1">{totalActiveBets}</div>
-              <div className="text-sm text-muted-foreground">Active Bets</div>
-            </CardContent>
-          </Card>
+        {/* Tabs for Copied vs Own Bets */}
+        <Tabs defaultValue="copied" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+            <TabsTrigger value="copied" className="flex items-center gap-2">
+              <Copy className="w-4 h-4" />
+              Copied Bets ({copiedBets.length})
+            </TabsTrigger>
+            <TabsTrigger value="own" className="flex items-center gap-2">
+              <Trophy className="w-4 h-4" />
+              My Bets ({ownedBets.length})
+            </TabsTrigger>
+          </TabsList>
 
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <DollarSign className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-3xl font-bold mb-1">${totalWagered.toFixed(2)}</div>
-              <div className="text-sm text-muted-foreground">Total Wagered</div>
-            </CardContent>
-          </Card>
+          {/* Copied Bets Tab */}
+          <TabsContent value="copied" className="space-y-6">
+            {/* Stats for Copied Bets */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <Card className="bg-card border-border">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <Trophy className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1">{totalCopiedActive}</div>
+                  <div className="text-sm text-muted-foreground">Active Copied</div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <TrendingUp className="w-5 h-5 text-success" />
-              </div>
-              <div className="text-3xl font-bold mb-1 text-success">${totalPotentialEarnings.toFixed(2)}</div>
-              <div className="text-sm text-muted-foreground">Potential Earnings</div>
-            </CardContent>
-          </Card>
+              <Card className="bg-card border-border">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <DollarSign className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1">${totalCopiedWagered.toFixed(2)}</div>
+                  <div className="text-sm text-muted-foreground">Wagered</div>
+                </CardContent>
+              </Card>
 
-          <Card className="bg-card border-border">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-2">
-                <AlertCircle className="w-5 h-5 text-primary" />
-              </div>
-              <div className="text-3xl font-bold mb-1">${totalTipsPaid.toFixed(2)}</div>
-              <div className="text-sm text-muted-foreground">Total Tips Paid</div>
-            </CardContent>
-          </Card>
-        </div>
+              <Card className="bg-card border-border">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <TrendingUp className="w-5 h-5 text-success" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1 text-success">${totalCopiedPotential.toFixed(2)}</div>
+                  <div className="text-sm text-muted-foreground">Potential Win</div>
+                </CardContent>
+              </Card>
 
-        {/* Active Bets List */}
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Circle className="w-5 h-5" />
-              All Active Bets
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockActiveBets.map(bet => {
+              <Card className="bg-card border-border">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <AlertCircle className="w-5 h-5 text-primary" />
+                  </div>
+                  <div className="text-3xl font-bold mb-1">${totalTipsPaid.toFixed(2)}</div>
+                  <div className="text-sm text-muted-foreground">Tips Paid</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Copied Bets List */}
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Copy className="w-5 h-5" />
+                  Bets You're Copying
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+              <div className="space-y-3">
+                {copiedBets.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    You haven't copied any bets yet. Browse the marketplace to find bettors to follow!
+                  </div>
+                ) : (
+                  copiedBets.map(bet => {
                 const SportIcon = bet.sportIcon;
                 return (
                   <div
@@ -303,10 +352,180 @@ const ActiveBets = () => {
                     </div>
                   </div>
                 );
-              })}
+              })
+            )}
+          </div>
+          </CardContent>
+        </Card>
+      </TabsContent>
+
+      {/* Own Bets Tab */}
+      <TabsContent value="own" className="space-y-6">
+        {/* Stats for Own Bets */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="bg-card border-border">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Trophy className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-3xl font-bold mb-1">{totalOwnedActive}</div>
+              <div className="text-sm text-muted-foreground">Active Bets</div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <Users className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-3xl font-bold mb-1">{totalCopiers}</div>
+              <div className="text-sm text-muted-foreground">Total Copiers</div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <DollarSign className="w-5 h-5 text-primary" />
+              </div>
+              <div className="text-3xl font-bold mb-1">${totalOwnedWagered.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Your Wager</div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-card border-border">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-2">
+                <TrendingUp className="w-5 h-5 text-success" />
+              </div>
+              <div className="text-3xl font-bold mb-1 text-success">${totalPotentialTipEarnings.toFixed(2)}</div>
+              <div className="text-sm text-muted-foreground">Potential Tips</div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Own Bets List */}
+        <Card className="bg-card border-border">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5" />
+              Your Bets (Others Can Copy)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {ownedBets.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  You haven't created any bets yet. Create your first bet to start earning tips!
+                </div>
+              ) : (
+                ownedBets.map(bet => {
+                  const SportIcon = bet.sportIcon;
+                  return (
+                    <div
+                      key={bet.id}
+                      className="flex flex-col gap-4 p-4 rounded-lg border border-border hover:border-primary/50 transition-all bg-card"
+                    >
+                      {/* Main Bet Info */}
+                      <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        {/* Sport Icon & Game */}
+                        <div className="flex items-center gap-3 md:w-64">
+                          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                            <SportIcon className="w-5 h-5 text-primary" />
+                          </div>
+                          <div>
+                            <div className="text-xs text-muted-foreground">{bet.sport}</div>
+                            <div className="font-semibold text-sm">{bet.game}</div>
+                          </div>
+                        </div>
+
+                        {/* Bet Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="outline" className="text-xs">
+                              {bet.betType}
+                            </Badge>
+                            <Badge variant="secondary" className="text-xs">
+                              {bet.tipPercentage}% tip
+                            </Badge>
+                          </div>
+                          <div className="text-sm font-medium">{bet.description}</div>
+                          <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
+                            <span>Your wager: ${bet.wagerAmount}</span>
+                            <span>•</span>
+                            <span>{bet.placedAt}</span>
+                          </div>
+                        </div>
+
+                        {/* Potential Payout & Tips */}
+                        <div className="text-center md:w-40">
+                          <div className="text-lg font-bold text-foreground">
+                            ${bet.potentialPayout.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">Your Potential</div>
+                          {bet.potentialTipEarnings && bet.potentialTipEarnings > 0 && (
+                            <div className="text-sm font-bold text-success mt-1">
+                              +${bet.potentialTipEarnings.toFixed(2)} tips
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Status */}
+                        <div className="md:w-24">
+                          <Badge
+                            variant={
+                              bet.status === "won" ? "outline" :
+                              bet.status === "lost" ? "destructive" :
+                              bet.status === "active" ? "default" :
+                              "secondary"
+                            }
+                            className={
+                              bet.status === "won" ? "bg-success/10 text-success border-success/50" :
+                              bet.status === "active" ? "bg-primary/10 text-primary border-primary/50" :
+                              bet.status === "pending" ? "border-border" :
+                              ""
+                            }
+                          >
+                            {bet.status === "won" ? "Won" : 
+                             bet.status === "lost" ? "Lost" : 
+                             bet.status === "active" ? "Live" : 
+                             "Pending"}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Copiers Section */}
+                      {bet.copiers && bet.copiers.length > 0 && (
+                        <div className="pt-3 border-t border-border/50">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
+                              <Users className="w-3 h-3" />
+                              {bet.copiers.length} copier{bet.copiers.length !== 1 ? 's' : ''}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-2">
+                            {bet.copiers.map((copier) => (
+                              <div key={copier.id} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-muted/50 border border-border">
+                                <Avatar className="w-5 h-5 ring-1 ring-border">
+                                  <AvatarImage src={getAvatarUrl(copier.id, copier.username)} alt={copier.username} />
+                                  <AvatarFallback className="text-[8px]">{copier.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-xs font-medium">@{copier.username}</span>
+                                <span className="text-xs text-muted-foreground">${copier.amount}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </CardContent>
         </Card>
+      </TabsContent>
+    </Tabs>
       </div>
     </div>
   );
