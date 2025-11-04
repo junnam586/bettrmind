@@ -27,6 +27,7 @@ const CreateBet = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [aiScore, setAiScore] = useState<number | null>(null);
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [isShadowMode, setIsShadowMode] = useState(true);
 
   const sports = [
     { id: "nfl", name: "NFL", emoji: "🏈" },
@@ -162,10 +163,11 @@ const CreateBet = () => {
     }
 
     const betTypeLabel = parlayLegs.length > 0 ? `${parlayLegs.length + 1}-leg parlay` : 'bet';
+    const moneyType = isShadowMode ? 'shadow money' : 'real money';
     
     toast({
-      title: "Bet Published!",
-      description: `Your ${selectedSport.toUpperCase()} ${betTypeLabel} is now ${isPublic ? "public" : "private"} with ${tipPercentage}% tip requirement`,
+      title: isShadowMode ? "Shadow Bet Created!" : "Bet Published!",
+      description: `Your ${selectedSport.toUpperCase()} ${betTypeLabel} with ${moneyType} is now ${isPublic ? "public" : "private"} with ${tipPercentage}% tip requirement`,
     });
     
     // Reset form
@@ -183,8 +185,29 @@ const CreateBet = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Create Your Bet</h1>
-          <p className="text-muted-foreground">Build custom bets across multiple sports and earn when others copy you</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 text-gradient">Create Your Bet</h1>
+              <p className="text-muted-foreground">Build custom bets across multiple sports and earn when others copy you</p>
+            </div>
+            <div className="flex items-center gap-3 p-4 rounded-lg border-2 border-border bg-card">
+              <div className="text-right">
+                <Label htmlFor="shadow-mode" className="cursor-pointer font-semibold">Shadow Mode</Label>
+                <p className="text-xs text-muted-foreground">Practice with fake money</p>
+              </div>
+              <Switch
+                id="shadow-mode"
+                checked={isShadowMode}
+                onCheckedChange={setIsShadowMode}
+              />
+            </div>
+          </div>
+          {isShadowMode && (
+            <div className="p-3 rounded-lg bg-accent/10 border border-accent/30 flex items-center gap-2">
+              <Badge variant="outline" className="border-accent text-accent">SHADOW MODE</Badge>
+              <span className="text-sm text-muted-foreground">All bets are using fake money for practice</span>
+            </div>
+          )}
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -278,15 +301,21 @@ const CreateBet = () => {
 
             {/* Wager Amount */}
             <div>
-              <Label htmlFor="wager">Wager Amount ($)</Label>
+              <Label htmlFor="wager">Wager Amount ({isShadowMode ? 'Shadow $' : '$'})</Label>
               <Input
                 id="wager"
                 type="number"
                 min="5"
                 value={wager || ""}
                 onChange={(e) => setWager(parseFloat(e.target.value))}
-                placeholder="Minimum $5"
+                placeholder={isShadowMode ? "Practice with fake money" : "Minimum $5"}
               />
+              {isShadowMode && (
+                <p className="text-xs text-accent mt-1 flex items-center gap-1">
+                  <Badge variant="outline" className="border-accent text-accent text-[10px] px-1 py-0">SHADOW</Badge>
+                  Using fake money for practice
+                </p>
+              )}
             </div>
 
             {/* Tip Percentage */}
@@ -400,11 +429,14 @@ const CreateBet = () => {
         </div>
 
         {/* Summary Card */}
-        <Card className="bg-card border-border sticky top-24">
+        <Card className={`bg-card sticky top-24 ${isShadowMode ? 'border-accent/50' : 'border-border'}`}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="w-5 h-5" />
               Bet Summary
+              {isShadowMode && (
+                <Badge variant="outline" className="border-accent text-accent ml-auto">SHADOW</Badge>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -444,7 +476,7 @@ const CreateBet = () => {
               )}
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Wager</span>
-                <span className="font-bold">${wager || "0.00"}</span>
+                <span className="font-bold">{isShadowMode ? 'Shadow $' : '$'}{wager || "0.00"}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Tip Requirement</span>
@@ -452,7 +484,7 @@ const CreateBet = () => {
               </div>
               <div className="flex justify-between text-lg">
                 <span className="font-semibold">Potential Payout</span>
-                <span className="font-bold text-success">${calculatePayout()}</span>
+                <span className="font-bold text-success">{isShadowMode ? 'Shadow $' : '$'}{calculatePayout()}</span>
               </div>
             </div>
 
