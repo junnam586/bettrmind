@@ -21,6 +21,57 @@ const CreateBet = () => {
   const [betType, setBetType] = useState("");
   const [selection, setSelection] = useState("");
   const [odds, setOdds] = useState("1.90");
+
+  // Generate selection options and odds based on bet type and game
+  const getSelectionOptions = () => {
+    if (!selectedGame || !betType) return [];
+    
+    const teams = selectedGame.split(' vs ');
+    const team1 = teams[0];
+    const team2 = teams[1];
+    
+    switch (betType) {
+      case "Spread":
+        return [
+          { label: `${team1} -${(1.5 + Math.random() * 11).toFixed(1)}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
+          { label: `${team2} +${(1.5 + Math.random() * 11).toFixed(1)}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
+        ];
+      case "Moneyline":
+        return [
+          { label: `${team1} ML`, odds: (1.45 + Math.random() * 1.5).toFixed(2) },
+          { label: `${team2} ML`, odds: (1.45 + Math.random() * 1.5).toFixed(2) },
+        ];
+      case "Over/Under":
+        const total = (35 + Math.random() * 60).toFixed(1);
+        return [
+          { label: `Over ${total}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
+          { label: `Under ${total}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
+        ];
+      case "Player Props":
+        const players = ["Player 1", "Player 2", "Star Player", "MVP Candidate"];
+        const props = ["Points", "Rebounds", "Assists", "Yards", "Touchdowns", "Goals"];
+        const player = players[Math.floor(Math.random() * players.length)];
+        const prop = props[Math.floor(Math.random() * props.length)];
+        const line = (0.5 + Math.random() * 30).toFixed(1);
+        return [
+          { label: `${player} Over ${line} ${prop}`, odds: (1.80 + Math.random() * 0.35).toFixed(2) },
+          { label: `${player} Under ${line} ${prop}`, odds: (1.80 + Math.random() * 0.35).toFixed(2) },
+        ];
+      default:
+        return [];
+    }
+  };
+
+  const selectionOptions = getSelectionOptions();
+
+  // Update odds when selection changes
+  const handleSelectionChange = (value: string) => {
+    setSelection(value);
+    const selectedOption = selectionOptions.find(opt => opt.label === value);
+    if (selectedOption) {
+      setOdds(selectedOption.odds);
+    }
+  };
   const [wager, setWager] = useState(0);
   const [parlayLegs, setParlayLegs] = useState<BetInBasket[]>([]);
   const [tipPercentage, setTipPercentage] = useState(10);
@@ -259,7 +310,11 @@ const CreateBet = () => {
             {/* Bet Type */}
             <div>
               <Label htmlFor="bet-type">Bet Type</Label>
-              <Select value={betType} onValueChange={setBetType}>
+              <Select value={betType} onValueChange={(value) => {
+                setBetType(value);
+                setSelection("");
+                setOdds("1.90");
+              }}>
                 <SelectTrigger id="bet-type">
                   <SelectValue placeholder="Choose bet type" />
                 </SelectTrigger>
@@ -274,28 +329,43 @@ const CreateBet = () => {
             {/* Selection/Pick */}
             <div>
               <Label htmlFor="selection">Your Selection</Label>
-              <Input
-                id="selection"
-                placeholder="e.g., Chiefs -3.5, Over 48.5, Lakers ML"
-                value={selection}
-                onChange={(e) => setSelection(e.target.value)}
-              />
+              {selectionOptions.length > 0 ? (
+                <Select value={selection} onValueChange={handleSelectionChange}>
+                  <SelectTrigger id="selection">
+                    <SelectValue placeholder="Choose your pick" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {selectionOptions.map(option => (
+                      <SelectItem key={option.label} value={option.label}>
+                        {option.label} ({option.odds}x)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  id="selection"
+                  placeholder="Select a game and bet type first"
+                  value={selection}
+                  disabled
+                />
+              )}
               <p className="text-xs text-muted-foreground mt-1">
-                What are you betting on?
+                Odds update based on your selection
               </p>
             </div>
 
             {/* Odds (Display Only) */}
             <div>
-              <Label htmlFor="odds">Odds (Fixed)</Label>
+              <Label htmlFor="odds">Odds</Label>
               <Input
                 id="odds"
-                value={odds}
+                value={`${odds}x`}
                 disabled
-                className="bg-secondary/50"
+                className="bg-secondary/50 font-bold text-primary"
               />
               <p className="text-xs text-muted-foreground mt-1">
-                Official odds - cannot be modified
+                Updates automatically based on your selection
               </p>
             </div>
 
