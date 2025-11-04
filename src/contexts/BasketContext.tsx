@@ -17,12 +17,15 @@ interface BasketContextType {
   removeFromBasket: (id: string) => void;
   clearBasket: () => void;
   isInBasket: (id: string) => boolean;
+  isShadowMode: boolean;
+  setIsShadowMode: (value: boolean) => void;
 }
 
 const BasketContext = createContext<BasketContextType | undefined>(undefined);
 
 export const BasketProvider = ({ children }: { children: ReactNode }) => {
   const [basket, setBasket] = useState<BetInBasket[]>([]);
+  const [isShadowMode, setIsShadowMode] = useState(true);
 
   const addToBasket = (bet: BetInBasket) => {
     setBasket(prev => {
@@ -47,7 +50,7 @@ export const BasketProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <BasketContext.Provider value={{ basket, addToBasket, removeFromBasket, clearBasket, isInBasket }}>
+    <BasketContext.Provider value={{ basket, addToBasket, removeFromBasket, clearBasket, isInBasket, isShadowMode, setIsShadowMode }}>
       {children}
     </BasketContext.Provider>
   );

@@ -4,11 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useBasket } from '@/contexts/BasketContext';
 import { useToast } from '@/hooks/use-toast';
 
 const BettingBasket = () => {
-  const { basket, removeFromBasket, clearBasket } = useBasket();
+  const { basket, removeFromBasket, clearBasket, isShadowMode, setIsShadowMode } = useBasket();
   const { toast } = useToast();
   const [isExpanded, setIsExpanded] = useState(false);
   const [aiScore, setAiScore] = useState<number | null>(null);
@@ -54,15 +56,17 @@ const BettingBasket = () => {
   const handlePlaceBet = () => {
     if (basket.length === 0) return;
 
+    const moneyType = isShadowMode ? 'shadow money' : 'real money';
+    
     if (basket.length === 1) {
       toast({
-        title: 'Bet Placed!',
-        description: `Single bet with ${basket[0].odds.toFixed(2)}x odds`,
+        title: isShadowMode ? 'Shadow Bet Placed!' : 'Bet Placed!',
+        description: `Single bet with ${basket[0].odds.toFixed(2)}x odds using ${moneyType}`,
       });
     } else {
       toast({
-        title: 'Parlay Created!',
-        description: `${basket.length}-leg parlay with ${calculateParlayOdds().toFixed(2)}x odds`,
+        title: isShadowMode ? 'Shadow Parlay Created!' : 'Parlay Created!',
+        description: `${basket.length}-leg parlay with ${calculateParlayOdds().toFixed(2)}x odds using ${moneyType}`,
       });
     }
     clearBasket();
@@ -87,12 +91,15 @@ const BettingBasket = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 w-72">
-      <Card className="shadow-2xl border-primary/20 flex flex-col" style={{ maxHeight: 'calc(100vh - 8rem)' }}>
+      <Card className={`shadow-2xl flex flex-col ${isShadowMode ? 'border-accent/50' : 'border-primary/20'}`} style={{ maxHeight: 'calc(100vh - 8rem)' }}>
         <CardHeader className="pb-2 py-3 shrink-0">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-2">
             <CardTitle className="flex items-center gap-2 text-base">
               <ShoppingBasket className="w-4 h-4" />
               Basket ({basket.length})
+              {isShadowMode && (
+                <Badge variant="outline" className="border-accent text-accent text-xs">SHADOW</Badge>
+              )}
             </CardTitle>
             <Button
               variant="ghost"
@@ -101,6 +108,15 @@ const BettingBasket = () => {
             >
               <X className="w-4 h-4" />
             </Button>
+          </div>
+          <div className="flex items-center justify-between gap-2 p-2 rounded-lg bg-muted/30">
+            <Label htmlFor="basket-shadow" className="text-xs cursor-pointer">Shadow Mode</Label>
+            <Switch
+              id="basket-shadow"
+              checked={isShadowMode}
+              onCheckedChange={setIsShadowMode}
+              className="scale-75"
+            />
           </div>
         </CardHeader>
         <CardContent className="space-y-3 overflow-y-auto flex-1">
@@ -146,9 +162,9 @@ const BettingBasket = () => {
             <>
               {/* Wager Input */}
               <div className="p-3 rounded-lg bg-muted/30 border border-border space-y-2">
-                <label className="text-sm font-medium">Wager Amount</label>
+                <label className="text-sm font-medium">Wager Amount ({isShadowMode ? 'Shadow $' : '$'})</label>
                 <div className="flex items-center gap-2">
-                  <span className="text-muted-foreground">$</span>
+                  <span className="text-muted-foreground">{isShadowMode ? 'S$' : '$'}</span>
                   <Input
                     type="number"
                     value={wager}
@@ -159,6 +175,12 @@ const BettingBasket = () => {
                     step="10"
                   />
                 </div>
+                {isShadowMode && (
+                  <p className="text-xs text-accent flex items-center gap-1">
+                    <Badge variant="outline" className="border-accent text-accent text-[10px] px-1 py-0">SHADOW</Badge>
+                    Using fake money
+                  </p>
+                )}
               </div>
 
               {/* Bet Summary */}
@@ -172,7 +194,7 @@ const BettingBasket = () => {
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">Potential Payout</span>
                   <span className="font-bold text-success">
-                    ${calculatePayout()}
+                    {isShadowMode ? 'S$' : '$'}{calculatePayout()}
                   </span>
                 </div>
               </div>

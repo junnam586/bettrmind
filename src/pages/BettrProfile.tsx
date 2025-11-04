@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis, XAxis } from "recharts";
 import { toast } from "@/hooks/use-toast";
@@ -99,7 +101,7 @@ const generateActiveBets = (sport: string, username: string) => {
 
 const BettrProfile = () => {
   const { username } = useParams();
-  const { addToBasket, isInBasket } = useBasket();
+  const { addToBasket, isInBasket, isShadowMode, setIsShadowMode } = useBasket();
   const [selectedBets, setSelectedBets] = useState<string[]>([]);
   
   // Mock bettr data - in real app would fetch from API
@@ -280,18 +282,37 @@ const BettrProfile = () => {
         {/* Active Bets Section */}
         <Card className="gradient-card border-border">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5" />
                 @{bettr.username}'s Active Bets ({activeBets.length})
               </CardTitle>
-              {selectedBets.length > 0 && (
-                <Button onClick={handleAddToBasket} className="bg-primary hover:bg-primary/90">
-                  <ShoppingBasket className="w-4 h-4 mr-2" />
-                  Add {selectedBets.length} to Basket
-                </Button>
-              )}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card">
+                  <div className="text-right">
+                    <Label htmlFor="copy-shadow-mode" className="cursor-pointer text-sm font-semibold">Shadow Mode</Label>
+                    <p className="text-xs text-muted-foreground">Copy with fake money</p>
+                  </div>
+                  <Switch
+                    id="copy-shadow-mode"
+                    checked={isShadowMode}
+                    onCheckedChange={setIsShadowMode}
+                  />
+                </div>
+                {selectedBets.length > 0 && (
+                  <Button onClick={handleAddToBasket} className="bg-primary hover:bg-primary/90">
+                    <ShoppingBasket className="w-4 h-4 mr-2" />
+                    Add {selectedBets.length} to Basket
+                  </Button>
+                )}
+              </div>
             </div>
+            {isShadowMode && (
+              <div className="p-3 rounded-lg bg-accent/10 border border-accent/30 flex items-center gap-2">
+                <Badge variant="outline" className="border-accent text-accent">SHADOW MODE</Badge>
+                <span className="text-sm text-muted-foreground">Copying bets with fake money for practice</span>
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
