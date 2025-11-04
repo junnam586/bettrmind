@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
+import { generateBettrStats } from "@/lib/bettrData";
 
 // Generate 40-50 realistic bettr profiles across sports
 const generateBettrs = () => {
@@ -65,33 +66,21 @@ const generateBettrs = () => {
   Object.entries(sports).forEach(([sport, usernames]) => {
     const sportBios = bios[sport as keyof typeof bios];
     usernames.forEach((username, index) => {
-      const followers = sport === "NFL" || sport === "NBA" 
-        ? Math.floor(1000 + Math.random() * 14000) // 1K-15K
-        : Math.floor(150 + Math.random() * 5000); // 150-5K
-      
-      const winRate = Math.floor(52 + Math.random() * 16); // 52-68%
-      const roi = (15 + Math.random() * 60).toFixed(1); // 15-75%
-      const totalBets = Math.floor(150 + Math.random() * 350); // 150-500
-      
-      // Generate realistic performance data with ups and downs
-      const recentPerformance = Array.from({ length: 15 }, () => {
-        const isWin = Math.random() < (winRate / 100);
-        return isWin ? (1 + Math.random() * 8) : -(1 + Math.random() * 5);
-      });
+      const stats = generateBettrStats(username, sport);
 
       allBettrs.push({
         id: id++,
         username,
         sport,
-        roi: `+${roi}%`,
-        winRate,
-        followers: followers > 1000 ? `${(followers / 1000).toFixed(1)}K` : followers.toString(),
-        totalBets,
+        roi: stats.roi,
+        winRate: stats.winRate,
+        followers: stats.followers,
+        totalBets: stats.totalBets,
         bio: sportBios[index % sportBios.length],
-        recentPerformance,
+        recentPerformance: stats.recentPerformance,
         recentVolume: `${Math.floor(10 + Math.random() * 90)}K`,
-        activeBets: Math.floor(3 + Math.random() * 12), // 3-15 active bets
-        tipPercentage: Math.floor(5 + Math.random() * 11) // 5-15% tip
+        activeBets: stats.activeBets,
+        tipPercentage: stats.tipPercentage
       });
     });
   });

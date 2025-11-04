@@ -10,9 +10,16 @@ import Navigation from "@/components/Navigation";
 import { LineChart, Line, ResponsiveContainer, YAxis, XAxis } from "recharts";
 import { toast } from "@/hooks/use-toast";
 import { useBasket } from "@/contexts/BasketContext";
+import { generateActiveBetsCount } from "@/lib/bettrData";
 
 // Sample active bets for demonstration
-const generateActiveBets = (sport: string) => {
+const generateActiveBets = (sport: string, username: string) => {
+  // Seeded random for consistency
+  const seededRandom = (index: number) => {
+    const hash = username.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) + index;
+    const x = Math.sin(hash) * 10000;
+    return x - Math.floor(x);
+  };
   const games = {
     NFL: [
       { team1: "Kansas City Chiefs", team2: "Buffalo Bills", spread: "-3.5", ml: "-165", total: "54.5" },
@@ -51,28 +58,28 @@ const generateActiveBets = (sport: string) => {
   const selectedGames = games[sport as keyof typeof games] || games.NFL;
   
   return selectedGames.flatMap((game, idx) => {
-    const numBets = Math.floor(1 + Math.random() * 3); // 1-3 bets per game
+    const numBets = Math.floor(1 + seededRandom(idx * 1000) * 3); // 1-3 bets per game
     return Array.from({ length: numBets }, (_, i) => {
-      const betType = betTypes[Math.floor(Math.random() * betTypes.length)];
+      const betType = betTypes[Math.floor(seededRandom(idx * 1000 + i) * betTypes.length)];
       let pick = "";
       let odds = "";
       
       if (betType === "Spread") {
-        pick = Math.random() > 0.5 ? `${game.team1} ${game.spread}` : `${game.team2} +${game.spread.replace('-', '')}`;
+        pick = seededRandom(idx * 2000 + i) > 0.5 ? `${game.team1} ${game.spread}` : `${game.team2} +${game.spread.replace('-', '')}`;
         odds = "-110";
       } else if (betType === "Moneyline") {
-        pick = Math.random() > 0.5 ? `${game.team1} ML` : `${game.team2} ML`;
+        pick = seededRandom(idx * 2000 + i) > 0.5 ? `${game.team1} ML` : `${game.team2} ML`;
         odds = game.ml;
       } else if (betType === "Over/Under") {
-        pick = Math.random() > 0.5 ? `Over ${game.total}` : `Under ${game.total}`;
+        pick = seededRandom(idx * 2000 + i) > 0.5 ? `Over ${game.total}` : `Under ${game.total}`;
         odds = "-115";
       } else {
         pick = `${game.team1.split(' ').pop()} special prop`;
         odds = "+145";
       }
 
-      const amount = Math.floor(25 + Math.random() * 275); // $25-$300
-      const hoursAgo = Math.floor(1 + Math.random() * 72);
+      const amount = Math.floor(25 + seededRandom(idx * 3000 + i) * 275); // $25-$300
+      const hoursAgo = Math.floor(1 + seededRandom(idx * 4000 + i) * 72);
       
       return {
         id: `${idx}-${i}`,
@@ -82,7 +89,7 @@ const generateActiveBets = (sport: string) => {
         odds,
         amount,
         date: new Date(Date.now() + (1 + Math.random() * 5) * 24 * 60 * 60 * 1000).toLocaleDateString(),
-        time: `${Math.floor(13 + Math.random() * 8)}:${Math.random() > 0.5 ? '00' : '30'} PM ET`,
+        time: `${Math.floor(13 + seededRandom(idx * 5000 + i) * 8)}:${seededRandom(idx * 6000 + i) > 0.5 ? '00' : '30'} PM ET`,
         placedAgo: `${hoursAgo}h ago`,
         status: "Pending" as const
       };
@@ -113,7 +120,7 @@ const BettrProfile = () => {
     bestStreak: 12
   };
 
-  const activeBets = generateActiveBets(bettr.sport);
+  const activeBets = generateActiveBets(bettr.sport, bettr.username);
   const chartData = bettr.recentPerformance.map((value, index) => ({ index, value }));
 
   // Generate avatar based on username
