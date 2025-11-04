@@ -109,8 +109,18 @@ const MakeBets = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Bettr Marketplace</h1>
-          <p className="text-muted-foreground">Browse verified bettrs and copy their active bets</p>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 text-gradient">Bettr Marketplace</h1>
+              <p className="text-muted-foreground">Browse verified bettrs and copy their active bets</p>
+            </div>
+            <Link to="/create-bet">
+              <Button size="lg" className="bg-primary hover:bg-primary/90">
+                <TrendingUp className="w-5 h-5 mr-2" />
+                Create Your Own Bet
+              </Button>
+            </Link>
+          </div>
         </div>
 
         {/* Filters */}
