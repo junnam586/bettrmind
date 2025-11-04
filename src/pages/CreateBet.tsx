@@ -22,7 +22,7 @@ const CreateBet = () => {
   const [selection, setSelection] = useState("");
   const [odds, setOdds] = useState("1.90");
 
-  // Generate selection options and odds based on bet type and game
+  // Generate selection options and odds based on bet type and game (seeded for consistency)
   const getSelectionOptions = () => {
     if (!selectedGame || !betType) return [];
     
@@ -30,32 +30,49 @@ const CreateBet = () => {
     const team1 = teams[0];
     const team2 = teams[1];
     
+    // Use game and betType as seed for consistent random values
+    const seed = selectedGame + betType;
+    const seededRandom = (index: number) => {
+      const hash = seed.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) + index;
+      const x = Math.sin(hash) * 10000;
+      return x - Math.floor(x);
+    };
+    
     switch (betType) {
       case "Spread":
+        const spread = (1.5 + seededRandom(0) * 11).toFixed(1);
+        const spreadOdds1 = (1.85 + seededRandom(1) * 0.25).toFixed(2);
+        const spreadOdds2 = (1.85 + seededRandom(2) * 0.25).toFixed(2);
         return [
-          { label: `${team1} -${(1.5 + Math.random() * 11).toFixed(1)}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
-          { label: `${team2} +${(1.5 + Math.random() * 11).toFixed(1)}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
+          { label: `${team1} -${spread}`, odds: spreadOdds1 },
+          { label: `${team2} +${spread}`, odds: spreadOdds2 },
         ];
       case "Moneyline":
+        const mlOdds1 = (1.45 + seededRandom(3) * 1.5).toFixed(2);
+        const mlOdds2 = (1.45 + seededRandom(4) * 1.5).toFixed(2);
         return [
-          { label: `${team1} ML`, odds: (1.45 + Math.random() * 1.5).toFixed(2) },
-          { label: `${team2} ML`, odds: (1.45 + Math.random() * 1.5).toFixed(2) },
+          { label: `${team1} ML`, odds: mlOdds1 },
+          { label: `${team2} ML`, odds: mlOdds2 },
         ];
       case "Over/Under":
-        const total = (35 + Math.random() * 60).toFixed(1);
+        const total = (35 + seededRandom(5) * 60).toFixed(1);
+        const ouOdds1 = (1.85 + seededRandom(6) * 0.25).toFixed(2);
+        const ouOdds2 = (1.85 + seededRandom(7) * 0.25).toFixed(2);
         return [
-          { label: `Over ${total}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
-          { label: `Under ${total}`, odds: (1.85 + Math.random() * 0.25).toFixed(2) },
+          { label: `Over ${total}`, odds: ouOdds1 },
+          { label: `Under ${total}`, odds: ouOdds2 },
         ];
       case "Player Props":
         const players = ["Player 1", "Player 2", "Star Player", "MVP Candidate"];
         const props = ["Points", "Rebounds", "Assists", "Yards", "Touchdowns", "Goals"];
-        const player = players[Math.floor(Math.random() * players.length)];
-        const prop = props[Math.floor(Math.random() * props.length)];
-        const line = (0.5 + Math.random() * 30).toFixed(1);
+        const player = players[Math.floor(seededRandom(8) * players.length)];
+        const prop = props[Math.floor(seededRandom(9) * props.length)];
+        const line = (0.5 + seededRandom(10) * 30).toFixed(1);
+        const propOdds1 = (1.80 + seededRandom(11) * 0.35).toFixed(2);
+        const propOdds2 = (1.80 + seededRandom(12) * 0.35).toFixed(2);
         return [
-          { label: `${player} Over ${line} ${prop}`, odds: (1.80 + Math.random() * 0.35).toFixed(2) },
-          { label: `${player} Under ${line} ${prop}`, odds: (1.80 + Math.random() * 0.35).toFixed(2) },
+          { label: `${player} Over ${line} ${prop}`, odds: propOdds1 },
+          { label: `${player} Under ${line} ${prop}`, odds: propOdds2 },
         ];
       default:
         return [];
@@ -337,7 +354,7 @@ const CreateBet = () => {
                   <SelectContent>
                     {selectionOptions.map(option => (
                       <SelectItem key={option.label} value={option.label}>
-                        {option.label} ({option.odds}x)
+                        {option.label} <span className="text-primary font-bold ml-2">({option.odds}x)</span>
                       </SelectItem>
                     ))}
                   </SelectContent>
